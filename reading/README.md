@@ -2,6 +2,10 @@
 
 * [알고리즘 문제 해결 전략](https://github.com/deliberate-practice/algo), 인사이트 (2012)
 
+## Data Science
+
+* [Graphing Data with R](graphing_data_with_r.md), O'Reilly (2016)
+
 ## Network
 
 * [Advanced Content Delivery Streaming, and Cloud Services](advanced_content_delivery_streaming.md), Wiley (2014)
