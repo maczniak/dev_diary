@@ -10,6 +10,11 @@
 
 * [Advanced Content Delivery Streaming, and Cloud Services](advanced_content_delivery_streaming.md), Wiley (2014)
 
+## Programming
+
+* [Learn You a Haskell for Great Good!](learn_you_a_haskell_for_great_good.md), No Starch Press (2014)
+* [Real World Haskell](real_world_haskell.md), O'Reilly (2008)
+
 ## Software Engineering
 
 * [Building Maintainable Software: Ten Guidelines for Future-Proof Code](https://github.com/deliberate-practice/agile), O'Reilly (2016)
