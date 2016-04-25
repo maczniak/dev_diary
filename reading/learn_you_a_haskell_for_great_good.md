@@ -39,6 +39,20 @@ no singleton (one element) tuples<br>
 
 ## 3. Types and Typeclasses
 
+If a function is comprised only of special characters, it's considered an infix function by default. If we want to examine its type, pass it to another function or call it as a prefix function, we have to surround it in parentheses.<br>
+``5 `compare` 3`` ???<br>
+`fromIntegral :: (Num b, Integral a) => a -> b` -- class constraint =><br>
+typeclass - interface that defines some behaviors
+* `Eq` - `==`, `/=`, all standard Haskell types except for IO and functions
+* `Ord` - ordering
+* `Show` - can be presented as strings, `show`
+* `Read` - `read`, may need a type annotation, `read "['a','b']" :: [Char]`
+* `Enum` - `succ`, `pred`, (), Bool, Char, Ordering ([LT .. GT]), Int, Integer, Float, Double
+* `Bounded` - `minBound :: Int`, `maxBound :: (Bounded a) => a`
+* `Num`
+ * `Integral` - Int, Integer
+ * `Floating` - Float, Double
+
 ## 4. Syntax in Functions
 
 ## 5. Recursion

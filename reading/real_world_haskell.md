@@ -36,7 +36,7 @@ GHC (Glasgow Haskell Compiler, ghc + ghci + runghc, version 6.8.2 in 2007) vs Hu
 `:info (+)` -- show fixity rules, infixl/r 1(lowest)-9(highest)<br>
 `^` integer power, `**` floating point number exponent<br>
 `putStrLn` print string<br>
-`:set/unset +t` (show the type of an expression also), `:type 'a'`<br>
+`:set/unset +t` (show the type of an expression also), `:t[ype] 'a'`<br>
 ghci's `it` stores the result of the last expression we evaluated.
 
 ```haskell
@@ -45,6 +45,14 @@ main = interact wordCount
 	where wordCount input = show (length (lines input)) ++ "\n"```
 
 ## 2. Types and functions
+
+`compare a b` returns one of `LT`, `EQ` and `GT`.<br>
+type variable (not type name) starts with a lowercase letter.<br>
+both the type and the value of `()` are "unit" (like C `void`).<br>
+the result type of a function that has side effects begin with `IO`.<br>
+`:cd` in ghci<br>
+indentation matters. the exact amount is not important.<br>
+The record that we use to track an unevaluated expression (and result) is referred to as a thunk.
 
 ## 3. Defining types, streamlining functions
 
