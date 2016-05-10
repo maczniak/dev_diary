@@ -23,7 +23,7 @@ links - [erldocs.com][erldocs], [Programming Rules and Conventions][conventions]
 `*base*#*value*`<br>
 `_` is always unbounded, but `_Variable` is bounded.<br>
 (shell only) `f(Variable)` clear a variable or all variables<br>
-`'atom'` if a name does not start with a lower case or contains characters out of alphanum+_+@. An atom takes 4 bytes in the 32-bit system and 8 bytes in the 64-bit system.<br>
+`'atom'` if a name does not start with a lower case or contains characters out of alphanum+_+&commat;. An atom takes 4 bytes in the 32-bit system and 8 bytes in the 64-bit system.<br>
 `=:=`, `=/='`, `==`, `/=`<br>
 number < atom < reference < fun < port < pid < tuple < list < bit string
 
@@ -37,6 +37,7 @@ Value:Size/TypeSpecifierList ('-'-separated)
 * signedness - signed, (default) unsigned
 * endianness - (default) big, little, native
 * unit:Integer - 1-256, size * unit must be 8 times
+
 bsl, bsr, band, bor, bxor, bnot<br>
 <<"...">> bit string (not linked list)<br>
 binary comprehension ([specification][binary_comprehension]) became standard from R13B<br>
@@ -52,6 +53,7 @@ module attributes
 * `-export([Function1/Arity, ...).`
 * `-import(Module, [Function1/Arity, ...]).`
 * `-define(MACRO, some_value).`, `-define(sub(X,Y), X-Y).`
+
 how to compile - erlc, `compile:file(FileName)`, (in shell) c/1<br>
 (in shell) cd/1<br>
 beam means Bogdan/Björn's Erlang Abstract Machine. The other VMs are JAM (Joe's Abstract Machine, inspired by Prolog WAM, Warren Abstract Machine) and old BEAM (that compiles Erlang to C).<br>
@@ -157,7 +159,7 @@ can pattern match parial fields, `foo(#user{name=Name})`, `foo(U = #user{})`<br>
 * `rd(Name, Definition)` define records
 * `rf()` unload records
 * `rl()` list record definitions
-* `rp(Term)~ convert tuples to records (record =/= tuple)
+* `rp(Term)` convert tuples to records (record =/= tuple)
 
 **key/value**
 
@@ -166,7 +168,8 @@ can pattern match parial fields, `foo(#user{name=Name})`, `foo(U = #user{})`<br>
 * dicts module - for large data, orddict functions + map/2, fold/2, use maps instead from version 17.0
 * gb_trees - general balanced trees, for large data, map/2, next(Iterator), smallest/1, largest/1
 * ETS tables, DETS tables, mnesia database
-[benchmar][keyvalue_benchmark]
+
+[benchmark][keyvalue_benchmark]
 
 **array**
 
@@ -179,7 +182,7 @@ arrays module is not a C-like array. if you need C-like arrays, use Ports, C-Nod
 * gb_sets - ordsets + gb_trees functions
 * sofs (sets of sets) - sorted list, support mathematics concept, digraph-convertable
 
-**directed graph **
+**directed graph**
 
 use digraph and digraph_util modules
 
@@ -202,10 +205,11 @@ about concurrency
 * scalability - lightweight process, more hardwares, avoid memory sharing
 * fault-tolerance - errors are unavoidable, monitor other processes, location (local or remote) is transparent to programmers, asynchronous message passing, no assumption of the other processes
 * implementation - 300 words memory per process, process can be created in microseconds, one scheduler thread per core, balanced run queue, limit the rate of messages sent to overloaded processes
+
 no linear scaling due to Amdahl's Law, even can be slow on many cores, `erl -smp disable`<br>
 `[smp:2:2]` (two cores available, with two schedulers) `[rq:2]` (two run queues active, if SMP disabled, "rq:1")<br>
 one run queue per scheduler, (before R13B) multiple schedulers with only one shared run queue<br>
-three primitives
+three primitives:
 * spawn new processes - `spawn/1`, `spawn/3` MFA, <0.44.0> process identifier (pid), `self/0`
 * sending messages - `pid ! term` returns a sent message, (in shell) `flush()` flush and print any messages sent to the shell
 * receiving messages - `receive` like "case" expression
@@ -228,6 +232,7 @@ link/1, unlink/1, race condition safe spawn_link/1,3<br>
 if the linked process crashes (except natural causes), a special kind of message (cannot be caught by `try ... catch`) is sent.<br>
 system process - convert exit signals to regular messages (`{'EXIT', Pid, Reason}`), `process_flag(trap_exit, true)`<br>
 shell is restarted automatically.
+
 action | untrapped result | trapped result
 -----: | :--------------- | :-------------
 linked ends normally or calls exit(normal) | - nothing - | `{'EXIT', Pid, normal}`
@@ -253,10 +258,121 @@ whereis(atom) (shared state) can make race conditions, then use unique reference
 ## 14. Designing a Concurrent Application
 
 timer:send_after/2,3 implementation ???<br>
+standard Erlang directory structure (by [standard OTP practices][otp_practices]):
+* ebin/
+* include/ - .hrl files that are used by the other applications
+* priv/ - executables that interact with Erlang, such as specific drivers
+* src/ - private .hrl files here
+* conf/, /doc/, lib/
+
+Erlang's datetime `{{Year, Month, Day}, {Hour, Minute, Second}}`, see also [calendar module][calendar_module]<br>
+code server is basically a VM process in charge of an ETS table (VM-native in-memory database), and can hold two versions of each module. if a third version is loaded, all processes that run the oldest version get killed.<br>
+a new version is loaded by `c(Module)`, `l(Module)` or code module functions.<br>
+local call (within current version) vs external call (MFA form, always call the newest version)<br>
+we do not use the code server directly, but use code_change message and code upgrade function that transforms the state data structure.<br>
+you can use global module, [gproc library][gproc_library] instead of `register/2`.<br>
+`Emakefile` example
+```
+{'src/*', [debug_info,
+           {i, "src"},
+           {i, "include"},
+           {outdir, "ebin"}]}.
+```
+1) `erl -make`, `erl -pa ebin/` (add search path option), 2) `make:all([load])` (recompile and load)<br>
+`apply(M,F,A)`<br>
+`code:crash/0` checks module name conflicts.
+
+[otp_practices]: http://erlang.org/doc/design_principles/applications.html
+[calendar_module]: http://erldocs.com/18.0/stdlib/calendar.html
+[gproc_library]: https://github.com/uwiger/gproc
 
 ## 15. What is OTP?
 
+Erlang pros - 1) concurrency and distribution, 2) error handling capabilities, 3) OTP (Open Telecom Platform) framework<br>
+groups essential practices into a set of libraries, modules and standards designed to help you build applications. OTP reduces reduce complexity of testing, maintenance and understanding.<br>
+behaviors (gen_*, supervisors) over basic abstraction libraries (gen, sys, proc_lib) over Erlang<br>
+abstracted result
+```erlang
+-module(my_server).
+-export([start/2, start_link/2, call/2, cast/2, reply/2]).
+
+%%% Public API
+start(Module, InitialState) ->
+  spawn(fun() -> init(Module, InitialState) end).
+
+start_link(Module, InitialState) ->
+  spawn_link(fun() -> init(Module, InitialState) end).
+
+call(Pid, Msg) ->
+  Ref = erlang:monitor(process, Pid),
+  Pid ! {sync, self(), Ref, Msg},
+  receive
+    {Ref, Reply} ->
+      erlang:demonitor(Ref, [flush]),
+      Reply;
+    {'DOWN', Ref, process, Pid, Reason} ->
+      erlang:error(Reason)
+  after 5000 ->
+    erlang:error(timeout)
+  end.
+
+cast(Pid, Msg) ->
+  Pid ! {async, Msg},
+  ok.
+
+reply({Pid, Ref}, Reply) ->
+  Pid ! {Ref, Reply}.
+
+%%% Private stuff
+init(Module, InitialState) ->
+  loop(Module, Module:init(InitialState)).
+
+loop(Module, State) ->
+  receive
+    {async, Msg} ->
+      loop(Module, Module:handle_cast(Msg, State)); % handle_* returns NewState.
+    {sync, Pid, Ref, Msg} ->
+      loop(Module, Module:handle_call(Msg, {Pid, Ref}, State))
+  end.
+```
+
 ## 16. Clients and Servers
+
+about gen_server
+* init/1 - return `{ok, State}`, `{ok, State, TimeOut}`, `{ok, State, hibernate}`, `{stop, Reason}` or `ignore`, blocking call
+ * `erlang:hiberate(M,F,A)` BIF - reduce memory usage while waiting long time replies, 1) discard running process call stack, 2) do garbage collection to make one continuous heap, and 3) apply(M,F,A)
+* handle_call(Request, From, State) - return `{reply,Reply,NewState}`, `{reply,Reply,Timeout}`, `{reply,Reply,NewState,hibernate}`, `{noreply,NewState}`, `{noreply,NewState,Timeout}`, `{noreply,NewState,hibernate}`, `{stop,Reason,Reply,NewState}` or `{stop,Reason,NewState}`
+ * noreply - you must use `gen_server:reply/2` to reply afterwards
+* handle_cast(Message, State) - return `{noreply,NewState}`, `{noreply,NewState,Timeout}`, `{noreply,NewState,hibernate}` or `{stop,Reason,NewState}`
+* handle_info(Msg, State) - called by direct `!` operator (unexpected message), init/1's Timeout, monitor notification and `'EXIT'` signal, return like handle_cast/2
+* terminate(Reason, State) <-> init/1 - called by parent's death (only in this case, gen_server traps exits) or `stop` tuples, log unless one of `normal`, `shutdown` and `{shutdown, Term}` reasons is used, VM clean up (delete all ETS tables, close all ports, ...), stop code execution
+* code_change(PreviousVersion, State, Extra) - return `{ok, NewState}`
+ * PreviousVersion - Version or `{down, Version}`
+ * Extra - for upgrading entire releases by specific tools in larger OTP deployments
+
+behaviour specifies functions that it expects another module to have.<br>
+`-behaviour(gen_server)` or `-behavior(gen_server)`<br>
+custom behaviour:
+```erlang
+-module(my_behaviour).
+-export([behaviour_info/1]).
+ 
+%% init/1, some_fun/0 and other/3 are now expected callbacks
+behaviour_info(callbacks) -> [{init,1}, {some_fun, 0}, {other, 3}];
+behaviour_info(_) -> undefined.
+```
+[gen_server:start_link][gen_server_start_link]([ServerName,] Module, InitArgs, DebugOptions) -> {ok,Pid}<br>
+[gen_server:call][gen_server_call](ServerRef, Request[, Timeout]) - timeout is milliseconds or `infinity`, default 5 seconds
+
+gen_server:... | YourModule implements
+:------------- | :--------------------
+start/3-4      | init/1
+start_link/3-4 | init/1
+call/2-3       | handle_call/3
+cast/2         | handle_cast/2
+
+[gen_server_start_link]: http://erldocs.com/18.0/stdlib/gen_server.html#start_link/4
+[gen_server_call]: http://erldocs.com/18.0/stdlib/gen_server.html#call/2
 
 ## 17. Rage Against The Finite-State Machines
 

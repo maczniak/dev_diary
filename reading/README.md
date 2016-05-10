@@ -21,6 +21,7 @@
 * [Learn You a Haskell for Great Good!](learn_you_a_haskell_for_great_good.md), No Starch Press (2014)
 * [Learn You Some Erlang for Great Good!](learn_you_some_erlang_for_great_good.md), No Starch Press (2013)
 * [Real World Haskell](real_world_haskell.md), O'Reilly (2008)
+* [正規表現 技術入門](introduction_to_regular_expression.md), 技術評論社 (2015) translation
 
 ## Simulation
 

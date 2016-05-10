@@ -42,7 +42,8 @@ ghci's `it` stores the result of the last expression we evaluated.
 ```haskell
 -- file: ch01/WC.hs
 main = interact wordCount
-	where wordCount input = show (length (lines input)) ++ "\n"```
+	where wordCount input = show (length (lines input)) ++ "\n"
+```
 
 ## 2. Types and functions
 

@@ -7,7 +7,7 @@
 this book covers 4.1-5.0, 5.1, does not cover NDK<br>
 [Android Device Dashboard][android_device_dashboard]
 
-[android_deice_dashboard]: http://d.android.com/resources/dashboard/platform-versions.html
+[android_device_dashboard]: http://d.android.com/resources/dashboard/platform-versions.html
 
 ## Part I - Introducing Android
 
@@ -32,6 +32,7 @@ Preferences > Appearance & Behavior > System Settings > SDK Manager, install the
  * Google Repository - for gragle
  * Google USB Driver (Windows only)
  * Intel x86 Emulator Accelerator
+
 if network problems occur, check Tools > Options > Force https://... sources to be fetched using http://...<br>
 [IntelliJ IDEA Quick Start guide][intellij_guide]
 
@@ -45,7 +46,7 @@ if network problems occur, check Tools > Options > Force https://... sources to 
 `add shell` opens a Linux shell<br>
 [Native Development Toolkit][ndk] (NDK)<br>
 ART (Android Runtime) - replace Dalvik (by Dan Bernstein) from Android 5.0 (Lollipop), ahead-of-time compiler, longer install time<br>
-building blocks
+building blocks:
 * activity - user interface screen, save its own state, get application global information by extending Context class
 * fragment - component of an activity, you need to use a compatibility library prior to Android 3.0 (Honeycomb)
 * view - the smallest level of user interface, Java code or XML layout, have attributes
@@ -53,6 +54,7 @@ building blocks
 * service - run in the background, many built-in services with convenient APIs
 * content provider - data wrapped up in the custom API, share global data between applications
 * resource - in `res` directory, `R` class with identifiers (different from standard Java resources), [Android resource compiler][aapt] (aapt)
+
 Activity Manager manages the application stack that is navigated by using Back button.<br>
 applicaion = activities + one Linux process (disposable containers for activities), application can be "alive" even if its process has been killed<br>
 each activity and fragment has its own life cycle.<br>
@@ -62,12 +64,14 @@ activity life cycle (running -> paused -> stopped)
 * paused - optional override onSaveInstanceState(Bundle) -> onPause()
 * stopped - optional override onSaveInstanceState(Bundle) -> may not be run onStop()
 * destroyed - may not be run onDestroy()
+
 fragment life cycle (fragments can outlive the activities that contain them)
 * starting
 * created - onInflate(), onAttach(), onCreate()
 * active - onCreateView(), onActivityCreated(), onViewStateRestored(), onStart()*, onResume()*
 * inactive - onPause()*, onStop()*, onSaveInstanceState()*, onDestroyView()
 * destroyed - onDestroy(), onDetach()
+
 applicaion's `AndroidManifest.xml` asks for permissions. when the application is installed, Package Manager grants permissions based on certificates or user answers.<br>
 permissions - INTERNET, READ_CONTACTS, WRITE_CONTACTS, RECEIVE_SMS (monitor incoming SMS messages), ACCESS_COARSE_LOCATION (use cell tower or Wi-Fi), ACCESS_FINE_LOCATION (use GPS)<br>
 refer to [Android security model][android_security_model] for details
@@ -113,7 +117,18 @@ Fragment methods - .putState(...), setRetainInstance(true) do not destroy this f
 
 ### 5. Ghost in the Machine
 
+[minimax algorithm][minimax] - switch between maximum score and minimum score, the number of case increases by times, use [alpha-beta pruning][alpha_beta_pruning] or [Negamax][negamax] to limit computation
+
+[minimax]: https://en.wikipedia.org/wiki/Minimax
+[alpha_beta_pruning]: http://en.wikipedia.org/wiki/Alpha-beta_pruning
+[negamax]: http://en.wikipedia.org/wiki/Negamax
+
 ### 6. Adding Sounds
+
+android.media.SoundPool can mix multiple sounds in contrast to android.media.MediaPlayer. SoundPool.Builder class from Android 5.0 (Lollipop)<br>
+[MediaRecorder class][mediarecorder]
+
+[mediarecorder]: http://d.android.com/reference/android/media/MediaRecorder.html
 
 ### 7. Adding Animation
 
