@@ -25,6 +25,7 @@
 
 ## Simulation
 
+* [An Introduction to Agent-Based Modeling](introduction_to_agent_based_modeling.md), The MIT Press (2015)
 * [Introduction to the Modeling and Analysis of Complex Systems](introduction_to_the_modeling_and_analysis_of_complex_systems.md), Open SUNY Textbooks (2015)
 
 ## Software Engineering
