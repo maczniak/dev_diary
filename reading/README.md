@@ -21,10 +21,13 @@
 ## Programming
 
 * [Beginning Haskell: A Project-Based Approach](beginning_haskell_a_project_based_approach.md), Apress (2014)
+* [Erlang and OTP in Action](erlang_and_otp_in_action.md), Manning (2011) 
+* [Haskell Programming from first principles](haskell_programming_from_first_principles.md), (not yet)
 * [Learn You a Haskell for Great Good!](learn_you_a_haskell_for_great_good.md), No Starch Press (2014)
 * [Learn You Some Erlang for Great Good!](learn_you_some_erlang_for_great_good.md), No Starch Press (2013)
 * [Pearls of Functional Algorithm Design][pearls_of_functional_algorithm_design.md), Cambridge University Press (2010)
 * [Real World Haskell](real_world_haskell.md), O'Reilly (2008)
+* [Redis Essentials](redis_essentials.md), Packt Publishing (2015)
 * [正規表現 技術入門](introduction_to_regular_expression.md), 技術評論社 (2015) translation
 
 ## Simulation
