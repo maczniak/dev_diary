@@ -343,12 +343,162 @@ Functors are combinators: they take a sentence or phrase as input and produce a 
 [A system of constructor classes: overloading and implicit higher-order polymorphism][gofer_generalizes_typeclasses]<br>
 Functor laws - identity (`fmap id == id`), composition (`fmap (f . g) == fmap f . fmap g`)<br>
 fmap == (.) for function<br>
+A function is lifted over some structure f.
+
+```haskell
+{-# LANGUAGE ViewPatterns #-}
+
+import Test.QuickCheck
+import Test.QuickCheck.Function
+
+functorCompose' :: (Eq (f c), Functor f) =>
+                     f a
+                  -> Fun a b
+                  -> Fun b c
+                  -> Bool
+functorCompose' x (Fun _ f) (Fun _ g) =
+  (fmap (g . f) x) == (fmap g . fmap f $ x)
+
+Prelude> type IntToInt = Fun Int Int
+Prelude> type IntFC = [Int] -> IntToInt -> IntToInt -> Bool
+Prelude> quickCheck (functorCompose' :: IntFC)
+
+Prelude> type Nat f g = f a -> g a -- Not in scope: type variable 'a'
+Prelude> :set -XRank2Types -- or XRankNTypes
+Prelude> type Nat f g = forall a . f a -> g a
+Prelude> type Nat f g a = f a -> g a
+```
+
+Functor instances will be unique for a given datatype.
+
+```haskell
+{-# LANGUAGE FlexibleInstances #-}
+
+data Tuple a b = Tuple a b deriving (Eq, Show)
+newtype Flip f a b = Flip (f b a) deriving (Eq, Show)
+instance Functor (Flip Tuple a) where
+  fmap f (Flip (Tuple a b)) = Flip $ Tuple (f a) b
+```
+
+*Functor* is a mapping between categories. In Haskell, this manifests as a typeclass which lifts a function between two types over two new types. This conventionally implies some notion of a function which can be applied to a value with more structure than the unlifted function was originally designed for.
+
+* [Haskell Wikibook; The Functor class][haskell_wikibook_functor]
+* [The functor design pattern][functor_design_pattern] by Gabriel Gonzalez
+
+https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns ?<br>
+https://wiki.haskell.org/Rank-N_types ?
 
 [gofer_generalizes_typeclasses]: http://www.cs.tufts.edu/~nr/cs257/archive/mark-jones/fpca93.pdf
+[haskell_wikibook_functor]: https://en.wikibooks.org/wiki/Haskell/The_Functor_class
+[functor_design_pattern]: http://www.haskellforall.com/2012/09/the-functor-design-pattern.html
 
 ## 17. Applicative
 
+Applicative is a monoidal functor. The `Applicative` typeclass allows for function application lifted over structure (like Functor). But with Applicative the function we're applying is also embedded in some structure. Because the function *and* the value it's being applied to both have structure, we have to smash those structures together. So, Applicative involves monoids and functors. (Monoid for a structure and function application)
+
+```haskell
+-- in Control.Applicative
+class Functor f => Applicative f where
+  pure :: a -> f a
+  (<*>) :: f (a -> b) -> f a -> f b -- called apply, ap or tie-figher
+
+liftA :: Applicative f => (a -> b) -> f a -> f b
+liftA2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
+liftA3 :: Applicative f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d
+
+fmap f x = pure f <*> x -- f <?> x
+
+instance Monoid a => Applicative ((,) a) -- Defined in 'GHC.Base'
+instance (Monoid a, Monoid b) => Moniod (a, b)
+("Woo", (+1)) <*> (" Hoo!", 0)
+
+-- Cartesian product
+(,) <?> [1, 2] <*> [3, 4] == liftA2 (,) [1, 2] [3, 4]
+
+instance Applicative ((->) a) where
+  pure = const
+  (<*>) f g x = f x (g x)
+```
+
+Applicative laws
+* Identity - `pure id <*> v = v`
+* Composition - `pure (.) <*> u <*> v <*> w = u <*> (v <*> w)`
+* Homomorphism - `pure f <*> pure x = pure (f x)`
+ * A homomorphism is a structure-preserving map between two categories. The effect of applying a function that is embedded in some structure to a value that is embedded in some structure should be the same as applying a function to a value without affecting any outside structure.
+* Interchange - u <*> pure y = pure ($ y) <*> u
+
+[checkers][checkers_module] example
+
+```haskell
+import Test.QuickCheck.Checkers
+import Test.QuickCheck.Classes
+
+instance EqProp Bull where (=-=) = eq
+
+main = quickBatch (monoid Twoo) -- A value does not matter. It uses a type only.
+Prelude> quickBatch $ applicative [("b", "w", 1)]
+Prelude> let trigger = undefined :: [(String, String, Int)]
+Prelude> quickBatch (applicative trigger)
+```
+
+* [Validation library][validation_library] by Tony Morris and Nick Partridge
+* [Applicative Programming with Effects][applicative_prog_effects] by Conor McBride and Ross Paterson
+* Essence of the Iterator Pattern by Jeremy Gibbons and Bruno C. d. S. Oliveira
+* [Constructing Applicative Functors][construct_applicative_functors] by Ross Paterson
+* Idioms are oblivious, arrows are meticulous, monads are promiscuous by Sam Lindley, Philip Wadler and Jeremy Yallop
+ * Idiom means applicative functor and is a useful search term for published work on applicative functors.
+
+Success (+1) <*> (Success 1 :: Validation [Int] Int) p.749?
+
+[checkers_module]: https://github.com/conal/checkers
+[validation_library]: http://hackage.haskell.org/package/validation
+[applicative_prog_effects]: http://staff.city.ac.uk/~ross/papers/Applicative.html
+[construct_applicative_functors]: http://staff.city.ac.uk/~ross/papers/Constructors.html
+
 ## 18. Monad (SPOOKY? No.)
+
+```haskell
+class Applicative m => Monad m where -- GHC 7.10+
+  (>>=) :: m a -> (a -> m b) -> m b -- bind
+  (>>) :: m a -> m b -> m b         -- sequencing operator
+    -- (*>) :: Applicative f => f a -> f b -> f b
+  return :: a -> m a                -- the same as pure
+
+-- Monad is stronger than Applicative and Applicative is stronger than Functor.
+-- You can derive Applicative and Functor in terms of Monad,
+-- just as you can derive Functor in terms of Applicative
+fmap f xs = xs >>= return . f
+
+join :: Monad m => m (m a) -> m a
+-- concat :: Foldable t => t [a] -> [a]
+
+-- before applicatives were discovered
+liftA :: Applicative f => (a -> b)  -> f a  -> f b
+liftM :: Monad m =>       (a1 -> r) -> m a1 -> m r
+liftA2 :: Applicative f => (a -> b -> c)   -> f a  -> f b  -> f c
+liftM2 :: Monad m =>       (a1 -> a2 -> r) -> m a1 -> m a2 -> m r
+-- zipWith is liftA2 or liftM2 specialized to lists, but uses a different list monoid.
+zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
+zipWith (+) [3, 4] [5, 6] -- [8,10]
+liftA2 (+) [3, 4] [5, 6] -- [8,9,9,10]
+-- liftA3, liftM3, zipWith3
+
+binding :: do
+  name <- getLine
+  putStrLn name
+binding' =
+  getLine >>= putStrLn
+  -- getLine >>= \name -> putStrLn name
+```
+
+Monads are applicative functors with some unique features. Monads are not, strictly speaking, necessary to Haskell. Older implementations of Haskell did not use monad for constructing and transforming IO actions. Monads are powerful and fun, but they do not define Haskell. Rather, monads are defined in terms of Haskell.<br>
+["Monads are like burritos."][monads_like_burritos]<br>
+Monad is not 1) Impure, 2) An embedded language for imperative programming, 3) A value, 4) About strictness. Using monads also doesn't require knowing math. Or category theory.<br>
+"Haskell is the world's finest imperative programming language." -- Simon Peyton-Jones<br>
+
+...
+
+[monads_like_burritos]: http://blog.plover.com/prog/burritos.html
 
 ## 19. Abstract structure applied
 
