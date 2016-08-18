@@ -459,7 +459,8 @@ Success (+1) <*> (Success 1 :: Validation [Int] Int) p.749?
 
 ```haskell
 class Applicative m => Monad m where -- GHC 7.10+
-  (>>=) :: m a -> (a -> m b) -> m b -- bind
+  (>>=) :: m a -> (a -> m b) -> m b -- bind, like (join . fmap)
+    -- (=<<) :: (a -> f b) -> f a -> f b
   (>>) :: m a -> m b -> m b         -- sequencing operator
     -- (*>) :: Applicative f => f a -> f b -> f b
   return :: a -> m a                -- the same as pure
@@ -482,6 +483,7 @@ zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
 zipWith (+) [3, 4] [5, 6] -- [8,10]
 liftA2 (+) [3, 4] [5, 6] -- [8,9,9,10]
 -- liftA3, liftM3, zipWith3
+ap == (<*>)
 
 binding :: do
   name <- getLine
@@ -495,18 +497,154 @@ Monads are applicative functors with some unique features. Monads are not, stric
 ["Monads are like burritos."][monads_like_burritos]<br>
 Monad is not 1) Impure, 2) An embedded language for imperative programming, 3) A value, 4) About strictness. Using monads also doesn't require knowing math. Or category theory.<br>
 "Haskell is the world's finest imperative programming language." -- Simon Peyton-Jones<br>
+There is no `Monad` for `Validation` because `Either` always short-circuits on the first thing to have failed.
 
-...
+Monad laws
+* Identity laws - (right identity) `m >>= return = m`, (left identity) `return x >>= f = f x`
+* Associativity - `(m >>= f) >>= g = m >>= (\x -> f x >>= g)`
+
+```haskell
+instance Monad CountMe where -- example
+  return = pure
+
+  CountMe n a >>= f =
+    let CountMe n' b = f a
+    in CountMe (n + n') b
+
+mapM :: (Traversable t, Monad m) => (a -> m b) -> t a -> m (t b)
+mapM = sequence . fmap f
+forM = flip mapM
+sequence :: (Traversable t, Monad m) => t (m a) -> m (t a)
+sequence = mapM id
+```
+
+Kleisli composition<br>
+`(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c`
+
+* [What a Monad is not][what_monad_is_not]
+* [What I wish I knew when Learning Haskell][what_i_wish_i_knew] by Stephen Diehl
+* [Monads Made Difficult][monads_made_difficult] by Stephen Diehl
+* [Typeclassopedia][typeclassopedia] by Brent Yorgey
 
 [monads_like_burritos]: http://blog.plover.com/prog/burritos.html
+[what_monad_is_not]: https://wiki.haskell.org/What_a_Monad_is_not
+[what_i_wish_i_knew]: http://dev.stephendiehl.com/hask/#monads
+[monads_made_difficult]: http://www.stephendiehl.com/posts/monads.html
+[typeclassopedia]: https://wiki.haskell.org/Typeclassopedia
 
 ## 19. Abstract structure applied
 
+(<*) :: Applicative f => f a -> f b -> f a<br>
+[haproxy-haskell][haproxy-haskell] (Haskell binding to the HAProxy socket API)<br>
+[URL shortener example][url_shortener_example]<br>
+[Stack video tutorial][stack_video_tutorial]<br>
+`OverloadedStrings` make `String` literals polymorphic. (`Text`, `ByteString`, `fromString` of `IsString` typeclass)
+
+* [The case of the mysterious explosion in space][mysterious_explosion_in_space] (how GHC handles string literals)  by Bryan O'Sullivan
+
+understand code samples?
+
+[haproxy-haskell]: https://github.com/MichaelXavier/haproxy-haskell
+[url_shortener_example]: https://github.com/bitemyapp/shawty-prime/blob/master/app/Main.hs
+[stack_video_tutorial]: https://www.youtube.com/watch?v=sRonIB8ZStw
+[mysterious_explosion_in_space]: http://www.serpentine.com/blog/2012/09/12/the-case-of-the-mysterious-explosion-in-space/
+
 ## 20. Foldable
+
+```haskell
+-- all of Foldable is in the Prelude from GHC 7.10.
+class Foldable (t :: * -> *) where
+  {-# MINIMAL foldMap | foldr #-}
+  fold :: Data.Monoid.Monoid m => t m -> m
+  foldMap :: Data.Monoid.Monoid m => (a -> m) -> t a -> m
+
+toList :: t a -> [a]
+null :: t a -> Bool -- null (Left 3) == null Nothing
+length :: t a -> Int
+elem :: Eq a => a -> t a -> Bool
+maximum :: forall a . Ord a => t a -> a -- the largest element of a non-empty structure
+minimum :: forall a . Ord a => t a -> a
+sum :: (Foldable t, Num a) => t a -> a
+product :: (Foldable t, Num a) => t a -> a
+
+-- Data.Monoid
+newtype First a = First { getFirst :: Maybe a }
+newtype Last a = Last { getLast :: Maybe a }
+```
+
+* [Foldable and Traversable][foldable_and_traversable] by Jakub Arnold
+
+forall ?
+
+[foldable_and_traversable]: http://blog.jakubarnold.cz/2014/07/30/foldable-and-traversable.html
 
 ## 21. Traversable
 
+Traversable was introduced in the same paper as Applicative and its introduction to Prelude didn't come until the release of GHC 7.10. However, it was available as part of the `base` library for much longer than that. Traversable depends on Applicative, and thus Functor, and is also superclassed by Foldable.<br>
+[vector package][vector_package], [wreq package][wreq_package]
+
+```haskell
+-- in Data.Traversable
+class (Functor t, Foldable t) => Traversable t where
+  {-# MINIMAL traverse | sequenceA #-}
+  traverse :: Applicative f => (a -> f b) -> t a -> f (t b)
+         -- mapM :: Monad m => (a -> m b) -> [a] -> m [b] -- GHC prior to 7.10
+                   -- (=<<) :: (a -> m b) -> m a -> m b
+  traverse f = sequenceA . fmap f
+         -- (sequence .) . fmap = \ f xs -> sequence (fmap f xs)
+    -- implementation pattern: traverse f (Right y) = Right <$> f y
+  sequenceA :: Applicative f => t (f a) -> f (t a)
+      -- sequence :: Monad m => [m a] -> m [a] -- GHC prior to 7.10
+  sequenceA = traverse id
+
+-- in Data.Maybe
+catMaybes [Just 1, Just 2, Nothing] == [1, 2]
+-- cf. sequenceA [Just 1, Just2, Nothing] == Nothing
+fromMaybe :: a -> Maybe a -> a
+
+-- Traversable is stronger than Functor and Foldable. Because of this, we can
+-- recover the Functor and Foldable instance for a type from the Traversable,
+-- just as we can recover the Functor and Applicative from the Monad.
+fmap f t = runIdentity $ traverse (Identity . f) t
+foldMap f t = getConstant $ traverse (Constant . f) t
+```
+
+Traversable Laws
+* Naturality - `t . traverse f = traverse (t . f)`
+* Identity - `traverse Identity = Identity`
+* Composition - `traverse (Compose . fmap g . f) = Compose . fmap (traverse g) . traverse f`
+
+sequenceA laws
+* Naturality - `t . sequenceA = sequenceA . fmap t`
+* Identity - `sequenceA . fmap Identity = Identity`
+* Composition - `sequenceA . fmap Compose = Compose . fmap sequenceA . sequenceA`
+
+```haskell
+type TI = []
+
+main = do
+  let trigger = undefined :: TI (Int, Int, [Int])
+  quickBatch (traversable trigger)
+```
+
+[vector_package]: http://hackage.haskell.org/package/vector
+[wreq_package]: http://hackage.haskell.org/package/wreq
+
 ## 22. Reader
+
+We don't want to simply pass this information as arguments because it would be present in the type of almost every function. To address this, we use the Reader Monad. It is a way of stringing functions together when all those functions are awaiting one input from a shared environment.
+
+```haskell
+-- Functor, Applicative, and Monad for partially-applied functions
+fmap f1 f2 = f1 . f2
+(+) <$> f1 <*> f2 = liftA2 (+) f1 f2
+f1f2 = do
+    a <- f1
+    b <- f2
+    return (a + b)
+```
+
+...
 
 ## 23. State
 

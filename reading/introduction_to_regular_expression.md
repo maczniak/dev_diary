@@ -1,6 +1,6 @@
 # [다양한 언어로 배우는 정규표현식][homepage], 신야 료마, 스즈키 유스케, 타카타 켄 저, 김완섭 역, 제이펍 (2016)
 
-[homepage] http://jpub.tistory.com/553
+[homepage]: http://jpub.tistory.com/553
 
 Perl, Ruby, JavaScript, Python, Java 정규표현식 표 (p. xxiii)
 

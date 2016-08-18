@@ -1,10 +1,15 @@
 ## Computer Science
 
 * [알고리즘 문제 해결 전략](https://github.com/deliberate-practice/algo), 인사이트 (2012)
+* [Practical Foundations for Programming Languages, Second Edition](practical_foundations_for_programming_languages_2nd.md), Cambridge University Press (2016)
 
 ## Data Science
 
 * [Graphing Data with R](graphing_data_with_r.md), O'Reilly (2016)
+
+## History
+
+* [Idea Makers: Personal Perspectives on the Lives & Ideas of Some Notable People](idea_makers.md), Wolfram Media, Inc. (2016)
 
 ## Mobile
 
@@ -25,6 +30,7 @@
 * [Haskell Programming from first principles](haskell_programming_from_first_principles.md), (not yet)
 * [Learn You a Haskell for Great Good!](learn_you_a_haskell_for_great_good.md), No Starch Press (2014)
 * [Learn You Some Erlang for Great Good!](learn_you_some_erlang_for_great_good.md), No Starch Press (2013)
+* [The Little Schemer, Fourth Edition](little_schemer_4th.md), The MIT Press (1995)
 * [Pearls of Functional Algorithm Design](pearls_of_functional_algorithm_design.md), Cambridge University Press (2010)
 * [Purely Functional Data Structures](purely_functional_data_structures.md), Cambridge University Press (1998)
 * [Real World Haskell](real_world_haskell.md), O'Reilly (2008)
@@ -40,4 +46,8 @@
 
 * [Building Maintainable Software: Ten Guidelines for Future-Proof Code](https://github.com/deliberate-practice/agile), O'Reilly (2016)
 * [Peopleware: Productive Projects and Teams](https://github.com/deliberate-practice/agile), Addison-Wesley (3rd ed, 2013) translation
+
+## Web
+
+* [Developing Web Apps with Haskell and Yesod, 2nd Edition](developing_web_apps_with_haskell_and_yesod_2nd.md), O'Reilly (2015)
 
