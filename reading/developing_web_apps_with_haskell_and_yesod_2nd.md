@@ -1,6 +1,9 @@
 # [Developing Web Apps with Haskell and Yesod, 2nd Edition][homepage], by Michael Snoyman, O'Reilly (2015)
 
+[online reading][online_reading]
+
 [homepage]: http://shop.oreilly.com/product/0636920035664.do
+[online_reading]: http://www.yesodweb.com/book
 
 ## I. Basics
 
@@ -55,11 +58,16 @@ scaffolded site - `yesod init`, `cabal install --only-dependencies`, `yesod deve
 
 ### 4. Shakespearean Templates
 
-Shakespearean family of template languages
+[Shakespearean][shakespeare_package] family of template languages
 * Hamlet (HTML)
 * Julius (JavaScript)
 * Cassius, Lucius (CSS, only syntactical difference)
+
+[blaze-html][blazehtml] package provides the `Html` data type.<br>
 ...
+
+[shakespeare_package]: www.stackage.org/package/shakespeare
+[blazehtml_package]: https://hackage.haskell.org/package/blaze-html
 
 ### 5. Widgets
 

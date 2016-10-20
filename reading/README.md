@@ -7,9 +7,10 @@
 
 * [Graphing Data with R](graphing_data_with_r.md), O'Reilly (2016)
 
-## History
+## Essay and History
 
 * [Idea Makers: Personal Perspectives on the Lives & Ideas of Some Notable People](idea_makers.md), Wolfram Media, Inc. (2016)
+* [Masterminds of Programming](masterminds_of_programming.md), O'Reilly (2009)
 
 ## Mobile
 
@@ -25,6 +26,7 @@
 
 ## Programming
 
+* [진짜 쉽고 쓸모 있는 언어 파이썬](really_easy_and_useful_language_python.md), 성안당 (2016)
 * [Beginning Haskell: A Project-Based Approach](beginning_haskell_a_project_based_approach.md), Apress (2014)
 * [Erlang and OTP in Action](erlang_and_otp_in_action.md), Manning (2011) 
 * [Haskell Programming from first principles](haskell_programming_from_first_principles.md), (not yet)
@@ -35,6 +37,7 @@
 * [Purely Functional Data Structures](purely_functional_data_structures.md), Cambridge University Press (1998)
 * [Real World Haskell](real_world_haskell.md), O'Reilly (2008)
 * [Redis Essentials](redis_essentials.md), Packt Publishing (2015)
+* [SCALA for the Impatient](scala_for_the_impatient.md), Addison-Wesley (2012) translation
 * [正規表現 技術入門](introduction_to_regular_expression.md), 技術評論社 (2015) translation
 
 ## Simulation
@@ -50,4 +53,8 @@
 ## Web
 
 * [Developing Web Apps with Haskell and Yesod, 2nd Edition](developing_web_apps_with_haskell_and_yesod_2nd.md), O'Reilly (2015)
+* [HTML5 for Web Designers, Second Edition](html5_for_web_designers_2nd.md), A Book Apart (2016) translation
+* [Two Scoops of Django: Best Practices for Django 1.8](two_scoops_of_django_1.8.md), Two Scoops Press (2015) translation
+* [Web Development with Node and Express](web_development_with_node_and_express.md), O'Reilly (2014) translation
+* [파이썬 웹 프로그래밍: Django(장고)로 배우는 쉽고 빠른 웹 개발](python_web_programming_django.md), 한빛미디어 (2015)
 
