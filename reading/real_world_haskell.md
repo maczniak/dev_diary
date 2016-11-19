@@ -65,9 +65,41 @@ The record that we use to track an unevaluated expression (and result) is referr
 
 ## 7. Input and output
 
+`System.IO` module and `System.Directory` module
+
+```haskell
+catch :: Exception e => IO a -> (e -> IO a) -> IO a -- in not System.IO.Error but Control.Exception
+finally :: IO a -> IO b -> IO a -- in Control.Exception
+interact :: (String -> String) -> IO () -- in System.IO
+```
+
+lazy "input" and "output" on demand<br>
+`readFile` uses `hGetContents` internally, and the underlying `Handle` will be closed when the returned `String` is garbage-collected or all the input has been consumed. `writeFile` will close its underlying `Handle` when the entire `String` supplied to it has been written.<br>
+In some cases, you may need more control over exactly when your I/O occurs. In those cases, `hGetContents` will probably not be appropriate.<br>
+`System.Console.GetOpt` module of `base` package
+
 ## 8. Efficient file processing, regular expressions, and file name matching
 
+```haskell
+handle :: (Exception -> IO a) -> IO a - > IO a -- like catch(), in Control.Exception
+```
+
+The `error` throws an exception. Pure Haskell code cannot deal with exceptions, so control is going to rocket out of our pure code into the nearest caller that lives in `IO` and has an appropriate exception handler installed.
+
 ## 9. I/O case study: a library for searching the filesystem
+
+```haskell
+bracket :: IO a -> (a -> IO b) -> (a -> IO c) -> IO c
+  -- first -> last -> in-between, in Control.Exception
+maybe :: b -> (a -> b) -> Maybe a -> b
+
+maybeIO :: IO a -> IO (Maybe a)
+maybeIO act = handle (\_ -> return Nothing) (Just `liftM` act)
+  -- instead of "case of"
+```
+
+A Haskell implementation will automatically close the file handle when it notices that the handle is no longer being used. That will not occur until the garbage collector runs.<br>
+camel case
 
 ## 10. Code case study: parsing a binary data format
 
