@@ -130,10 +130,130 @@ characters surrounded by double-quotes, and an individual character *c* as
 `char` (faster than `aref`), `string-equal` (case-insensitive),`(format nil ...)` (returns a string), `(concatenate 'string "not " "to worry")`<br>
 In Common Lisp the type `sequence` includes both lists and vectors (and
 therefore strings).<br>
+See chapter 5 for `do`, `dotimes` and `when`.
+
+```
+(defstruct point ; It also implicitly defines the functions make-point,
+  x              ; point-p, copy-point, point-x, and point-y. Each point will
+  y)             ; be of type point, then structure, then atom, then t.
+> (setf p (make-point :x 0 :y 0))
+#S(POINT X 0 Y 0)
+> (setf (point-y p) 2)
+
+; with default expressions
+(defstruct polemic
+  (type (progn
+          (format t "What kind of polemic was it? ")
+          (read)))
+  (effect nil))
+
+(defstruct (point (:conc-name p) ; -> "p"x and "p"y
+                  (:print-function print-point))
+  (x 0)
+  (y 0))
+(defun print-point (p stream depth)
+  (format stream "#<~A,~A>" (px p) (py p)))
+; print-object takes the first two arguments.
+; A macro print-unreadable-object displays objects in #<...> syntax.
+
+; "and" and "or" usage
+(defun bst-min (bst)
+  (and bst
+       (or (bst-min (node-l bst)) bst)))
+```
+
+```
+; hash tables
+(setf ht (make-hash-table))
+(setf (gethash 'color ht) 'red)
+; Most implementations will display all the return values of a call made at the
+; toplevel, but code that expects only one return value will get just the first.
+```
 
 ## 5. Control
 
+Since only the value of the last expression is returned, the use of `progn` (or
+any block) implies side-effects.<br>
+Many Common Lisp operators that take a body of expressions implicitly enclose
+the body in a `block` named `nil`. The body of a function defined with `defun`
+is implicitly enclosed in a `block` with the same name as the function.<br>
+Thi operator is mainly something that other operators are built upon, not
+something you would use yourself. Most iteration operators have an implicit
+`tagbody`, so it's possible (through rarely desirable) to use labels and `go`
+within their bodies.<br>
+Entering a new lexical context is conceptually equivalent to a function
+call.<br>
+The function `mapc` is like `mapcar` but does not cons up a new list as a
+return value, so the only reason to use it is for side-effects. It always
+returns its second argument.<br>
+The maximum number of return values is implementation-dependent, but it will be
+at least 19. The `values` function returns multiple values. It returns exactly
+the values you give it as arguments. To receive multiple values, we use
+`multiple-value-bind`.<br>
+An `unwind-protect` takes any number of arguments and returns the value of the
+first. However, the remaining expressions will be evaluated even if the
+evaluation of the first is interrupted.
+
+```
+> (setf x 1)
+1
+> (catch 'abort
+    (unwind-protect
+      (throw 'abort 99)
+      (setf x 2)))
+99
+> x
+2
+```
+
 ## 6. Functions
+
+```
+(setf (symbol-function 'add2) ; (defun add2 (x) (+ x 2))
+      #'(lambda (x) (+ x 2)))
+```
+
+By making the first argument to `defun` a list of the form
+<code>(setf *f*)</code>, you define what happens when the first argument to
+`setf` is a call to *f*. In the definition of a function whose name is of the
+form <code>(setf *f*)</code>, the first parameter represents the new value, and
+the remaining parameters represent arguments to *f*. It's not necessary to
+define `primo` in order to define `(setf primo)`, but such definitions usually
+come in pairs.
+
+```
+(defun primo (lst) (car lst))
+(defun (setf primo) (val lst)
+  (setf (car lst) val))
+```
+
+A `do` expression can be similarly explained as a call to a recursive
+function.<br>
+Local functions can be defined with `labels`, which is a kind of `let` for
+functions.<br>
+When a function refers to a variable defined outside it, it's called a *free*
+variable. A function that refers to a free lexical variable is called a
+*closure*. (The name "closure" is left over from earlier Lisp dialects. It
+derives from the way closures have to be implemented under dynamic scope.) The
+variable must persist as long as the function does. A closure is a combination
+of a function and an environment. Closures are created implicitly whenever a
+function refers to something from the surrounding lexical environment. We can
+even make several closures share variables.<br>
+`nconc` = Haskell `concat`<br>
+The real distinction here is between lexical variables, which have lexical
+scope, and special variables, which have dynamic scope. But it's almost the
+same distinction, because local variables are nearly always lexical variables,
+and global variables are always special variables. Under lexical scope, a
+symbol refers to the variable that has that name in the context where the
+symbol appears, regardless of any name that might exist where a function is
+called. With dynamic scope, we look for a variable in the environment where the
+function is called, not in the environment where it was defined. To cause a
+variable to have dynamic scope, we must declare it to be `special` in any
+context where it occurs. Global variables established by called `setf` at the
+toplevel are implicitly special.<br>
+A `declare` can begin any body of code where new variables are created. The
+`special` declaration is unique, in that it can change the way a program
+behaves. All other declarations are simply advice to the compiler.
 
 ## 7. Input and Output
 

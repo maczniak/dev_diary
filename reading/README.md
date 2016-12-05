@@ -28,6 +28,7 @@
 ## Programming
 
 * [진짜 쉽고 쓸모 있는 언어 파이썬](really_easy_and_useful_language_python.md), 성안당 (2016)
+* [폴리글랏 프로그래밍](polyglot_programming.md), 한빛미디어 (2014)
 * [ANSI Common Lisp](ansi_common_lisp.md), Prentice Hall (1995)
 * [Beginning Haskell: A Project-Based Approach](beginning_haskell_a_project_based_approach.md), Apress (2014)
 * [Erlang and OTP in Action](erlang_and_otp_in_action.md), Manning (2011) 
