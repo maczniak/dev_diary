@@ -10,6 +10,7 @@
 
 ## Essay and History
 
+* [Dungeon Hacks: How NetHack, Angband, and Other Roguelikes Changed the Course of Video Game](dungeon_hacks.md), Press Start Press (2015)
 * [Idea Makers: Personal Perspectives on the Lives & Ideas of Some Notable People](idea_makers.md), Wolfram Media, Inc. (2016)
 * [Masterminds of Programming](masterminds_of_programming.md), O'Reilly (2009)
 
@@ -32,12 +33,17 @@
 * [ANSI Common Lisp](ansi_common_lisp.md), Prentice Hall (1995)
 * [Beginning Haskell: A Project-Based Approach](beginning_haskell_a_project_based_approach.md), Apress (2014)
 * [Erlang and OTP in Action](erlang_and_otp_in_action.md), Manning (2011) 
+* [Fluent Python](fluent_python.md), O'Reilly (2015)
+* [Game Programming Patterns](game_programming_patterns.md), Genever Benning (2014)
 * [Haskell Programming from first principles](haskell_programming_from_first_principles.md), (not yet)
+* [Just Spring](just_spring.md), O'Reily (2011)
 * [Learn You a Haskell for Great Good!](learn_you_a_haskell_for_great_good.md), No Starch Press (2014)
 * [Learn You Some Erlang for Great Good!](learn_you_some_erlang_for_great_good.md), No Starch Press (2013)
+* [Mazes for Programmers](mazes_for_programmers.md), The Pragmatic Programmers (2015)
 * [The Little Schemer, Fourth Edition](little_schemer_4th.md), The MIT Press (1995)
 * [On Lisp](on_lisp.md), Prentice Hall (1993)
 * [Pearls of Functional Algorithm Design](pearls_of_functional_algorithm_design.md), Cambridge University Press (2010)
+* [Pro Spring Boot](pro_spring_boot.md), Apress (2016)
 * [Purely Functional Data Structures](purely_functional_data_structures.md), Cambridge University Press (1998)
 * [Real World Haskell](real_world_haskell.md), O'Reilly (2008)
 * [Redis Essentials](redis_essentials.md), Packt Publishing (2015)
@@ -59,6 +65,7 @@
 
 * [Developing Web Apps with Haskell and Yesod, 2nd Edition](developing_web_apps_with_haskell_and_yesod_2nd.md), O'Reilly (2015)
 * [HTML5 for Web Designers, Second Edition](html5_for_web_designers_2nd.md), A Book Apart (2016) translation
+* [ng-book 2](ng_book_2.md), fullstack.io (2015)
 * [Two Scoops of Django: Best Practices for Django 1.8](two_scoops_of_django_1.8.md), Two Scoops Press (2015) translation
 * [Web Development with Node and Express](web_development_with_node_and_express.md), O'Reilly (2014) translation
 * [파이썬 웹 프로그래밍: Django(장고)로 배우는 쉽고 빠른 웹 개발](python_web_programming_django.md), 한빛미디어 (2015)
