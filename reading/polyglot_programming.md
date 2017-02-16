@@ -16,7 +16,7 @@
 [Failure and Exceptions: A Conversation with James Gosling, Part II][failure_and_exceptions]<br>
 [Source for theguardian.com][github_guardian_frontend]
 
-[failture_and_exceptions]: http://www.artima.com/intv/solid.html
+[failure_and_exceptions]: http://www.artima.com/intv/solid.html
 [github_guardian_frontend]: https://github.com/guardian/frontend
 
 ## 03 / 스칼라

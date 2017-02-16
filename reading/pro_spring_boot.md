@@ -183,7 +183,7 @@ jdbcTemplate.query("SELECT * FROM JOURNAL",
 ```
 
 by default, `org.h2.Driver`, `jdbc:h2:mem:testdb`, username: `sa`, password: empty<br>
-`spring.h2.console.enabled=true` with `spring-boot-starter-web` dependency<br>
+for `/h2-console`, `spring.h2.console.enabled=true` with `spring-boot-starter-web` dependency<br>
 [about JPA][about_jpa] (Java Persistence API), `@Entity`, `@Id` and `@GeneratedValue(strategy=GenerationType.AUTO)`, `@Transient`<br>
 Hibernate and Eclipse TopLink are the primary implementations of the JPA.<br>
 There is no database or table creation; everything will be done by the abstraction of the `JournalRepository`. You don't need to implement any of these methods.<br>
@@ -239,7 +239,7 @@ spring.datasource.testWhileIdle = true
 spring.datasource.validationQuery = SELECT 1
 #JPA-Hibernate
 spring.jpa.show-sql = true
-spring.jpa.hibernate.ddl-auto = create-drop | create | update
+spring.jpa.hibernate.ddl-auto = create-drop | create | update | validate | none
 spring.jpa.hibernate.naming-strategy = org.hibernate.cfg.ImprovedNamingStrategy
 spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5Dialect
 ```
@@ -323,6 +323,7 @@ public class ResourceSecurityConfiguration extends WebSecurityConfigurerAdapter{
             // .formLogin().loginPage("/login").permitAll()
             // .and()
             // .logout().permitAll();
+            // .and().csrf().disable();
     }
 }
 
@@ -490,11 +491,143 @@ public class WebSockConfig extends AbstractWebScoketMessageBrokerConfigurer{
 
 ## 11. Spring Boot Actuator
 
+via HTTP, JMX and SSH (using [CRaSH][crash] shell)<br>
+`spring-boot-starter-actuator` (`-d=web,actuator`)
+
+* `/actuator` - hypermedia-based discovery page, need `spring-hateoas`
+* `/autoconfig`
+* `/beans`
+* `/configprops` - all the configuration properties that are defined by the
+  `@ConfigurationProperties` beans
+* `/docs` - Actuator module documentation, need `spring-boot-actuator-docs`
+* `/dump` - thread dump
+* `/env` - all the properties (active profiles and system environment variables
+  and all application properties) from the Spring's `ConfigurableEnvironment`
+  interface
+* `/flyway` - need `spring-boot-starter-data-jpa`, `flyway-core` and `h2`
+* `/health` - disk usage and DB status
+* `/info` - `info.app.*` in `application.properties`
+* `/liquibase` - [Liquibase][liquibase], `liquibase-core` instead of
+  `flyway-core`, `db/changelog/db.changelog-master.yaml`
+* `/logfile` - log file contents, `logging.file` property (or
+  `<logging.path>/spring.log`) 
+* `/metrics` - `org.springframework.boot.actuate.metrics.CounterService`,
+  `GaugeService`, `@Autowired CounterService counter;`,
+  `counter.increment("counter.index.invoked");`
+* `/mappings` - all `@RequestMapping` paths
+* `/shutdown` (POST) - gracefully shut down, need
+  `endpoints.shutdown.enabled=true`
+* `/trace` - trace information, which is normally the last few HTTP requests
+
+only docs, info and health are not sensitive by default.
+ `endpoints.beans|trace.sensitive=false`<br>
+[Spring Boot Actuator Endpoints][spring_boot_actuator_endpoints]<br>
+`endpoints.beans.id=spring` (change URL), `endpoints.cors.allowed-origins=*`
+ (like `@CrossOrigin(origins="http://localhost:9000")`),
+ `endpoints.cors.allowed-methods=GET,POST`<br>
+`spring-boot-starter-remote-shell` (`-d=actuator,remote-shell`) commands: help,
+ cron, dashboard, egrep, endpoint (list, invoke), filter, java, jmx, jul, less,
+ mail, man, shell, sleep, sort, system, thread, repl, ...
+
+```
+management.context-path=/monitor
+management.security.enabled=false
+management.port=8081 | -1(disable)
+management.address=127.0.0.1
+
+shell.ssh.enabled: true
+shell.ssh.port: 2222
+shell.auth: simple
+shell.auth.simple.user.password: password
+```
+
+[crash]: http://www.crashub.org/
+[liquibase]: http://www.liquibase.org/
+[spring_boot_actuator_endpoints]: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html
+
 ## 12. Deploying Spring Boot
+
+```
+server.port=8443
+server.ssl.key-store=classpath:keystore.jks
+server.ssl.key-store-password=tomcat
+server.ssl.key-password=tomcat
+```
+
+`./mvnw package -DskipTests=true`<br>
+war packaging, `spring-boot-starter-tomcat` with `<scope>provided</scope>` (to
+ use `WEB-INF/lib-provided` instead of `WEB-INF/lib`)
+
+```java
+// make your application executable as standalone app and container-ready
+// for containers that support the Servlet API 3.0+
+@SpringBootApplication
+public class SpringBootJournalApplication extends SpringBootServletInitializer {
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(SpringBootJournalApplication.class);
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootJournalApplication.class, args);
+    }
+}
+```
+
+Pivotal's tc server - Spring Insight (an embedded tool for monitoring and
+ tracing Spring applications), add-ons such as GemFire and Redis<br>
+`./tcruntime-instance.sh create -i . myserver -v 8.0.30.C.RELEASE`, `./tcruntime-ctl.sh start`<br>
+when applications are runned in a container, SSL/HTTPS depends on a container configuration. Tomcat [SSL/TLS Configuration HOW-TO][tomcat_ssl_tls_config_howto]<br>
+use profile configurations<br>
+as a service: `<plugin><configuration><executable>true</executable></configuration></plugin>` in pom.xml, `ln -s /opt/spring-boot-journal-0.0.1-SNAPSHOT.war /etc/init.d/journal`<br>
+as a Windows service: [Spring Boot daemon][spring_boot_daemon]<br>
+with Docker: `docker-machine ip`, Docker plugin (see below), `./mvnw clean package docker:build -DskipTests=true`
+
+```xml
+<plugin>
+    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+    <dockerDirectory>src/main/resources/docker</dockerDictionary>
+    <resources>
+        <resource>
+            <targetPath>/</targetPath>
+            <directory>${project.build.directory}</directory>
+            <include>${project.build.finalName}.war</include>
+        </resource>
+    </resources>
+</plugin>
+```
+
+[tomcat_ssl_tls_config_howto]: https://tomcat.apache.org/tomcat-8.0-doc/ssl-howto.html
+[spring_boot_daemon]: https://github.com/snicoll-scratches/spring-boot-daemon
 
 ## 13. Spring Boot in the Cloud
 
+"Cloud-Native" architecure, the twelve-factor application guide (from Heroku), Microservices<br>
+`application-cloud.properties`<br>
+Cloud Foundry [open source version][cloud_foundry_open_source] ([NATS][nats] messaging system) and [commercial version][cloud_foundry_commercial] (web console, free, [download][cloud_foundry_commercial_download]<br>
+[Cloud Foundry CLI][cloud_foundry_cli] - `brew update`, `brew tap cloudfoundry/tap`, `brew install cf-cli`<br>
+[PCFDev][pcfdev] (Pivotal Cloud Foundry Dev, Vagrant file with a VM ready to use, that is a micro-instance of the Cloud Foundry, <- [Lattice][lattice] <- [BoshLite][boshlite] <- Micro Cloud Foundry) - `vagrant up --provider=virtualbox`<br>
+`cf login -a api.local.pcfdev.io --skip-ssl-validation`, `cf push <app-name> -p <path>`, `cf logs journal --recent`, `cf start|stop|restart journal`, `cf marketplace`, `cf create-service p-mysql 512mb mysql`, `cf services`, `cf bind-service journal mysql`, `cf restage journal`, `cf help`<br>
+[Pivotal Web Services][pivotal_web_services] ([Marketplace][pivotal_web_services_marketplace], [ClearDB][cleardb] MySQL Database) - `cf push <app-name> -p <path> --random-route` for `https://<app-name>-<random-name>.cfapps.io/`<br>
+[Spring Cloud Services][spring_cloud_services] ([download][spring_cloud_services_download]) - Config Server + Service Registry + Circuit Breaker Dashboard
+
+[cloud_foundry_open_source]: https://www.cloudfoundry.org/
+[nats]: https://nats.io/
+[cloud_foundry_commercial]: https://pivotal.io/platform
+[cloud_foundry_commercial_download]: https://network.pivotal.io/products/pivotal-cf
+[cloud_foundry_cli]: https://github.com/cloudfoundry/cli
+[pcfdev]: https://network.pivotal.io/products/pcfdev
+[lattice]: http://lattice.cf/
+[boshlite]: https://github.com/cloudfoundry/bosh-lite
+[pivotal_web_services]: http://run.pivotal.io/
+[pivotal_web_services_marketplace]: https://console.run.pivotal.io/marketplace
+[cleardb]: http://w2.cleardb.net/
+[spring_cloud_services]: http://docs.pivotal.io/spring-cloud-services/
+[spring_cloud_services_download]: https://network.pivotal.io/products/p-spring-cloud-services
+
 ## 14. Extending Spring Boot Apps
+
+custom Spring Boot module - `spring-boot-journal` (without the web controller class), `journal-spring-boot-starter` (with autoconfigure dependency only), `journal-spring-boot-autoconfigure` (with full dependencies, configuration class and controller) packages
 
 ## A. Spring Boot 1.4.x
 

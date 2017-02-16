@@ -556,13 +556,92 @@ limitations:
 * we cannot create new operators, only overload existing ones.
 * a few operators can't be overloaded: `is`, `and`, `or`, `not` (but the bitwise `&`, `|`, `~`, can).
 
-[The C Family of Languages: Interview with Dennis Ritchie, Bjarne Stroustrup, and James Gosling][c_family_of_languages_interview]
+unary operators - `__neg__`, `__pos__`, `__invert__`, `__abs__`, always return
+ a new object<br>
+`a + b`: `a.__add__(b)` -> if does not exist or returns `NotImplemented`,
+ `b.__radd__(a)` -> if does not exist or returns `NotImplemented`, raise
+ `TypeError`<br>
+`NotImplemented` (a special singleton value that an infix operator special
+ method should return to tell the interpreter it cannot handle a given operand)
+ vs `NotImplementedError` (an exception that stub methods in abstract classes
+ raise to warn that they must be overwritten by subclasses)<br>
+by definition, the reverse method will only be invoked when dealing with an
+ operand of a different type.
+
+```python
+def __add__(self, other):
+    try:
+        pairs = itertools.zip_longest(self, other, fillvalue=0.0)
+        return Vector(a + b for a, b in pairs)
+    except TypeError:
+        return NotImplemented
+
+def __radd__(self, other):
+    return self + other
+```
+
+`@` (matrix multiplication, Python 3.5, [PEP 465][pep_465]), `__matmul__`, `__rmatmul__`, `__imatmul__`<br>
+`object.__eq__` and `object.__ne__` is implemented in function object_richcompare in [Objects/typeobject.c][objects_typeobject_c]<br>
+augmented assignement operators are expected to change the lefthand operand in
+ place for mutable types.<br>
+The `+=` operator is more liberal than `+` with regard to the second operand.
+ With `+`, we want both operands to be of the same type, because if we accpets
+ different types this might cause confusion as to the type of the result. With
+ the `+=`, the situation is clearer: the left hand object is updated in place,
+ so there's no doubt about the type of the result. For sequence types, `+`
+ usually requires that both operands are of the same type, while `+=` often
+ accepts any iterable as the righthand operand.<br>
+the [`functools.total_ordering` function][functools_total_ordering_function] is
+ a class decorator that automatically generates methods for all rich comparison
+ operators in any class that defines at least a couple of them.<br>
+Probably about 20 to 30 percent of the population think of operator overloading
+ as the spawn of the devil; somebody has done something with operator
+ overloading that has just readlly ticked them off, because they've used like +
+ for list insertion and it makes life really, really confusing. A lot of that
+ problem stems from the fact that there are only about half a dozen operators
+ you can sensily overload, and yet there are thousands or millions of operators
+ that people would like to define--so you have to pick, and often the choices
+ conflict with your sense of intuition. ... Then there's a community of about
+ 10 percent that have actually used operator overloading appropriately and who
+ really care about it, and for whom it's actually really important; this is
+ almost exclusively people who do numerical work, where the notation is very
+ important to appealing to people's intuition, because they come into it with
+ an intuition about what the + means, and the ability yo say "a + b" where a
+ and b are complex numbers or matrices or something really does make sense. --
+ James Gosling<br>
+[The C Family of Languages: Interview with Dennis Ritchie, Bjarne Stroustrup, and James Gosling][c_family_of_languages_interview],
+ [A Simple Technique for Handling Multiple Polymorphism][simple_technique_for_handling_multiple_polymorphism] (paper),
+ [Arithmetic and Double Dispatching in Smalltalk-80][arithmetic_and_double_dispatching_in_smalltalk_80] (paper),
+ [CHICKEN Scheme][chicken_scheme]
 
 [c_family_of_languages_interview]: http://www.gotw.ca/publications/c_family_interview.htm
+[pep_465]: https://www.python.org/dev/peps/pep-0465/
+[objects_typeobject_c]: https://hg.python.org/cpython/file/c0e311e010fc/Objects/typeobject.c
+[functools_total_ordering_function]: https://docs.python.org/3/library/functools.html#functools.total_ordering
+[simple_technique_for_handling_multiple_polymorphism]: https://wiki.cites.illinois.edu/wiki/download/attachments/273416327/ingalls.pdf
+[arithmetic_and_double_dispatching_in_smalltalk_80]: https://wiki.cites.illinois.edu/wiki/download/attachments/273416327/double-dispatch.pdf
+[chicken_scheme]: http://www.call-cc.org/
 
 ## V. Control Flow
 
 ### Chapter 14: Iterables, Iterators, and Generators
+
+When I see patterns in my programs, I consider it a sign of trouble. The shape
+ of a program should reflect only the problem it needs to solve. Any other
+ regularity in the code is a sign, to me at least, that I'm using abstractions
+ that aren't powerful enough--often that I'm generating by hand the expansions
+ of some macro that I need to write. -- Paul Graham,
+ [Revenge of the Nerds][revenge_of_the_nerds]<br>
+Python does not have macros like Lisp, so abstracting away the Interator
+ pattern required changing the language: the `yield` keyword was  added in
+ Python 2.2 (`__future__` in Python 2.1). The yield keyword allows the
+ construction of generators, which work as iterators (that retrieves items from
+ a collection). Every generator is an iterator: generators fully implement the
+ iterator interface.<br>
+Every collection in Pythin is iterable. (for example, tuple unpacking and
+ unpacking actual parameters with `*` in function calls)
+
+[revenge_of_the_nerds]: http://www.paulgraham.com/icad.html
 
 ### Chapter 15: Context Managers and else Blocks
 

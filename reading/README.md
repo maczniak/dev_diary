@@ -1,8 +1,11 @@
 ## Computer Science
 
 * [알고리즘 문제 해결 전략](https://github.com/deliberate-practice/algo), 인사이트 (2012)
+* [Certified Programming with Dependent Types](certified_programming_with_dependent_types.md), The MIT Press (2013)
 * [From Mathematics to Generic Programming](from_mathematics_to_generic_programming.md), Addison-Wesley (2015)
+* [Logic for Computer Science, Second Edition](logic_for_computer_science_2nd.md), Dover (2015)
 * [Practical Foundations for Programming Languages, Second Edition](practical_foundations_for_programming_languages_2nd.md), Cambridge University Press (2016)
+* [Software Foundations](software_foundations.md) (2016)
 
 ## Data Science
 
@@ -19,6 +22,7 @@
 * [Android Programming: The Big Nerd Ranch Guide (2nd edition)](android_programming_big_nerd_ranch_2nd.md), Big Nerd Ranch (2015)
 * [Head First Android Development](head_first_android_development.md), O'Reilly (2015)
 * [Hello, Android (Fourth Edition)](hello_android_4th.md), The Pragmatic Programmers (2015)
+* [iOS Programming: The Big Nerd Ranch Guide (6th Edition)](ios_programming_the_big_nerd_ranch_guide_6th.md), Big Nerd Ranch (2016)
 
 ## Network
 
@@ -28,6 +32,7 @@
 
 ## Programming
 
+* [개미 수열을 푸는 10가지 방법](look_and_say_sequence_in_10_ways.md), Leanpub (2017)
 * [진짜 쉽고 쓸모 있는 언어 파이썬](really_easy_and_useful_language_python.md), 성안당 (2016)
 * [폴리글랏 프로그래밍](polyglot_programming.md), 한빛미디어 (2014)
 * [ANSI Common Lisp](ansi_common_lisp.md), Prentice Hall (1995)
@@ -40,14 +45,17 @@
 * [Learn You a Haskell for Great Good!](learn_you_a_haskell_for_great_good.md), No Starch Press (2014)
 * [Learn You Some Erlang for Great Good!](learn_you_some_erlang_for_great_good.md), No Starch Press (2013)
 * [Mazes for Programmers](mazes_for_programmers.md), The Pragmatic Programmers (2015)
+* [The Little Prover](little_prover.md), The MIT Press (2015)
 * [The Little Schemer, Fourth Edition](little_schemer_4th.md), The MIT Press (1995)
 * [On Lisp](on_lisp.md), Prentice Hall (1993)
 * [Pearls of Functional Algorithm Design](pearls_of_functional_algorithm_design.md), Cambridge University Press (2010)
 * [Pro Spring Boot](pro_spring_boot.md), Apress (2016)
 * [Purely Functional Data Structures](purely_functional_data_structures.md), Cambridge University Press (1998)
 * [Real World Haskell](real_world_haskell.md), O'Reilly (2008)
+* [Real World OCaml](real_world_ocaml.md), O'Reilly (2013)
 * [Redis Essentials](redis_essentials.md), Packt Publishing (2015)
 * [SCALA for the Impatient](scala_for_the_impatient.md), Addison-Wesley (2012) translation
+* [Type-Driven Development with Idris](type_driven_development_with_idris.md), Manning (2017)
 * [正規表現 技術入門](introduction_to_regular_expression.md), 技術評論社 (2015) translation
 * [はじめてのSpring Boot](first_spring_boot.md), 工学社 (2014) translation
 

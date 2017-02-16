@@ -16,7 +16,7 @@ CRPG subgenre
 
 secret passageways (bashing walls or casting the x-ray spell)<br>
 Beneath Apple Manor (1978, [1][bam_1], [2][bam_2])<br>
-[Dungeon Campaign (1978)][dugeon_campaign]
+[Dungeon Campaign (1978)][dungeon_campaign]
 
 [bam_1]: http://gue.cgwmuseum.org/galleries/index.php?pub=0&item=14&id=2&key=0
 [bam_2]: http://crpgaddict.blogspot.com/2012/12/game-79-beneath-apple-manor-1978.html
