@@ -5,6 +5,7 @@ Walter Pullen's [Think Labyrinth!][think_labyrinth]<br>
 Mike Bostock's [Visualizing Algorithms][visualizing_algorithms]<br>
 author's [blog post][blog_post]
 
+[homepage]: http://www.mazesforprogrammers.com/
 [source_code]: https://pragprog.com/titles/jbmaze/source_code
 [errata]: https://pragprog.com/titles/jbmaze/errata
 [think_labyrinth]: http://www.astrolog.org/labyrnth.htm

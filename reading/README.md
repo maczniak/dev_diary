@@ -2,10 +2,12 @@
 
 * [알고리즘 문제 해결 전략](https://github.com/deliberate-practice/algo), 인사이트 (2012)
 * [Certified Programming with Dependent Types](certified_programming_with_dependent_types.md), The MIT Press (2013)
+* [Compiling with Continuations](compiling_with_continuations.md), Cambridge University Press (1992)
 * [From Mathematics to Generic Programming](from_mathematics_to_generic_programming.md), Addison-Wesley (2015)
 * [Logic for Computer Science, Second Edition](logic_for_computer_science_2nd.md), Dover (2015)
 * [Practical Foundations for Programming Languages, Second Edition](practical_foundations_for_programming_languages_2nd.md), Cambridge University Press (2016)
 * [Software Foundations](software_foundations.md) (2016)
+* [Types and Programming Languages](types_and_programming_languages.md), The MIT Press (2002)
 
 ## Data Science
 

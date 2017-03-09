@@ -3,7 +3,7 @@
 [blog posts][blog_posts]
 
 [homepage]: http://www.wolfram-media.com/products/idea-makers.html
-[blog_post]: http://blog.stephenwolfram.com/category/historical-perspectives/
+[blog_posts]: http://blog.stephenwolfram.com/category/historical-perspectives/
 
 ## 1. Richard Feynman
 

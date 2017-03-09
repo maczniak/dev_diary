@@ -627,7 +627,10 @@ Cloud Foundry [open source version][cloud_foundry_open_source] ([NATS][nats] mes
 
 ## 14. Extending Spring Boot Apps
 
-custom Spring Boot module - `spring-boot-journal` (without the web controller class), `journal-spring-boot-starter` (with autoconfigure dependency only), `journal-spring-boot-autoconfigure` (with full dependencies, configuration class and controller) packages
+custom Spring Boot module - `spring-boot-journal` (without the web controller class), `journal-spring-boot-starter` (with autoconfigure dependency only), `journal-spring-boot-autoconfigure` (with full dependencies, configuration class and controller) packages<br>
+override `org.springframework.boot.actuate.health.HealthIndicator`'s `health()`
+ or `org.springframework.boot.actuate.health.AbstractHealthIndicator`'s
+ `doHealthCheck()`
 
 ## A. Spring Boot 1.4.x
 

@@ -1,4 +1,4 @@
-# [Dungeon Hacks: How NetHack, Angband, and Other Roguelikes Changed the Course of Video Game][homepage] by David L Craddock, Press Start Press (2015)
+# Dungeon Hacks: How NetHack, Angband, and Other Roguelikes Changed the Course of Video Game by [David L Craddock][david_craddock], Press Start Press (2015)
 
 [@davidlcraddock][twitter_davidlcraddock], [@PressStartPress][twitter_pressstartpress], [Episodic Content][episodic_content]
 

@@ -93,7 +93,7 @@ J-Bob is a program that helps us rewrite one expression to another. J-Bob
 
 `(if Q A E)`  - question, answer, else
 
-The Law of Dethm (final)<br>
+**The Law of Dethm** (final)<br>
 For any theorem (dethm *name* (*x<sub>1</sub>* ... *x<sub>n</sub>*)
  *body<sub>x</sub>*), the variables *x<sub>1</sub>* ... *x<sub>n</sub>* in
  *body<sub>x</sub>* can be replaced with any corresponding expressions
@@ -183,7 +183,7 @@ Given the non-recursive function (defun *name* (*x<sub>1</sub>* ...
 (*name* *e<sub>1</sub>* ... *e<sub>n</sub>*) = *body* where *x<sub>1</sub>* is
  *e<sub>1</sub>*, ..., *x<sub>n</sub>* is *e<sub>n</sub>*.
 
-Insight: Skip Irrelevant Expressions<br>
+Insight: **Skip Irrelevant Expressions**<br>
 Rewriting a claim to `'t` does not have to go in any particular order. Some
  parts of the expression might be skipped entirely. For example, `if-same` can
  simplify many `if` expressions to `'t` regardless of the `if` question.
@@ -214,7 +214,7 @@ all built-in operators are total. We are only concerned with the result of `cdr`
 `list1?` is total because `atom`, `cdr`, and `list0?` are total, and the `if`'s
  question, answer, and else all have values.
 
-The Law of Defun (final)<br>
+**The Law of Defun** (final)<br>
 Given the total function (defun *name* (*x<sub>1</sub>* ...
  *x<sub>n</sub>*) *body*),<br>
 (*name* *e<sub>1</sub>* ... *e<sub>n</sub>*) = *body* where *x<sub>1</sub>* is
@@ -327,7 +327,7 @@ Now we know that many functions that use recursion on lists can be total.
 ; (dethm memb?/remb3 (x1 x2 x3) ...
 ```
 
-Insight: Rewrite from the Inside Out<br>
+Insight: **Rewrite from the Inside Out**<br>
 Rewrite an expression from the "inside" out, starting inside `if` answers, `if`
  elses, and function arguments. Simplify the arguments of a function application
  as much as possible, then use the Law of Defun to replace the application with
@@ -354,12 +354,12 @@ Rewrite an expression from the "inside" out, starting inside `if` answers, `if`
       (original-focus E)))
 ```
 
-Insight: Pull Ifs Outward<br>
+Insight: **Pull Ifs Outward**<br>
 Use If Lifting when an `if` is found in an argument of a function application or
  in an `if` question. Lift the `if` outside any function applications and `if`
  questions.
 
-Insight: Keep Theorems in Mind<br>
+Insight: **Keep Theorems in Mind**<br>
 Bear existing theorems in mind, especially axioms. When the current claim
  contains an expression that some theorem can rewrite, try using that theorem.
  When the current claim contains *part* of an expression that some theorem can
@@ -385,18 +385,18 @@ recursion in proofs is called *induction*. One case for the empty list and
         't))
 ```
 
-Insight: Don't Touch Inductive Premises<br>
+Insight: **Don't Touch Inductive Premises**<br>
 Do not try to simplify an inductive premise in an inductive proof directly.
  Instead, rewrite the expression around it until the inductive premise can be
  applied. Often, after applying the inductive premise, an inductive proof is
  nearly done.
 
-Insight: Build Up to Induction Gradually<br>
+Insight: **Build Up to Induction Gradually**<br>
 Build up to a proof by induction over lits by proving theorems about the empty
  list, lists with one element, lists with two element, and so on. Once the
  pattern of these proofs is clear, the proof by induction should be similar.
 
-Proof by List Induction (why???)<br>
+**Proof by List Induction** (why???)<br>
 To prove a claim *C* by induction over a list named `x`, prove
  (if (atom x) *C* (if *C<sub>cdr</sub>* *C* 't))
 
@@ -426,17 +426,17 @@ To prove a claim *C* by induction over a list named `x`, prove
       't))
 ```
 
-Proof by Star Induction (why???)<br>
+**Proof by Star Induction** (why???)<br>
 To prove a claim *C* by induction over `car`s and `cdr`s of a variable named
  `x`, prove
  (if (atom x) *C* (if *C<sub>car</sub>* (if *C<sub>cdr</sub>* *C* 't) 't))
 
-Insight: Combine Ifs<br>
+Insight: **Combine Ifs**<br>
 When there are multiple `if`s with the same question, combine them into one `if`
  with If Lifting. Lift the `if`s outside any function applications and `if`
  questions.
 
-Insight: Create Helpers for Induction<br>
+Insight: **Create Helpers for Induction**<br>
 To rewrite the application of a recursive function, prove a separate theorem
  about the recursive function using induction. Do this if the current proof
  either does not use induction, or uses induction for a different kind of
@@ -499,7 +499,7 @@ To rewrite the application of a recursive function, prove a separate theorem
 A totality claim tells us that the function's measure decreases on every
  recursive call.
 
-Conjunction<br>
+**Conjunction**<br>
 The *conjunction* of expressions *e<sub>1</sub>* ... *e<sub>n</sub>* states that
  each of *e<sub>1</sub>* ... *e<sub>n</sub>* must be true.<br>
 The conjunction of zero expressions is `'t`.<br>
@@ -511,7 +511,7 @@ The conjunction of three or more expressions *e<sub>1</sub>* *e<sub>2</sub>* ...
  *e<sub>n</sub>* is the conjunction of *e<sub>1</sub>* and the conjunction of
  *e<sub>2</sub>* ... *e<sub>n</sub>*.
 
-Constructing Totality Claims<br>
+**Constructing Totality Claims**<br>
 Given a function (defun *name* (*x<sub>1</sub>* .. *x<sub>n</sub>*) body) and a
  measure *m*, construct a claim for subexpressions in *body*:<br>
 For variables and quoted literals, use `'t`.<br>

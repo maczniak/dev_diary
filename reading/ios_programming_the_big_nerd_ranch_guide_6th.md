@@ -1,4 +1,4 @@
-# iOS Programming: The Big Nerd Ranch Guide (6th Edition)][homepage] by Christian Keur and Aaron Hillegass, Big Nerd Ranch (2016)
+# [iOS Programming: The Big Nerd Ranch Guide (6th Edition)][homepage] by Christian Keur and Aaron Hillegass, Big Nerd Ranch (2016)
 
 [forum][forum], [solutions to exercises][exercise_solution], [errata][errata]<br>
 Swift 3.0, iOS 10, Xcode 8.1, macOS El Capitan version 10.11.4
@@ -34,7 +34,7 @@ a view's nearest neighbor to each direction can be its superview/container.
 ## 4. Text Input and Delegation
 
 property observer - `willSet`, `didSet`<br>
-Delegation is an object-oriented approach to callbacks.
+delegation is an object-oriented approach to callbacks.
 
 ## 5. View Controllers
 

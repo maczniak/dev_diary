@@ -63,7 +63,7 @@ scaffolded site - `yesod init`, `cabal install --only-dependencies`, `yesod deve
 * Julius (JavaScript)
 * Cassius, Lucius (CSS, only syntactical difference)
 
-[blaze-html][blazehtml] package provides the `Html` data type.<br>
+[blaze-html][blazehtml_package] package provides the `Html` data type.<br>
 ...
 
 [shakespeare_package]: www.stackage.org/package/shakespeare
