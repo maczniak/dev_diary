@@ -1,9 +1,11 @@
 ## Computer Science
 
 * [알고리즘 문제 해결 전략](https://github.com/deliberate-practice/algo), 인사이트 (2012)
+* [A Beginner's Guide to Mathematical Logic](beginners_guide_to_mathematical_logic.md), Dover (2014)
 * [Certified Programming with Dependent Types](certified_programming_with_dependent_types.md), The MIT Press (2013)
 * [Compiling with Continuations](compiling_with_continuations.md), Cambridge University Press (1992)
 * [From Mathematics to Generic Programming](from_mathematics_to_generic_programming.md), Addison-Wesley (2015)
+* [Implementing Functional Languages](implementing_functional_languages.md), Prentice Hall (1992)
 * [Logic for Computer Science, Second Edition](logic_for_computer_science_2nd.md), Dover (2015)
 * [Practical Foundations for Programming Languages, Second Edition](practical_foundations_for_programming_languages_2nd.md), Cambridge University Press (2016)
 * [Software Foundations](software_foundations.md) (2016)
@@ -15,9 +17,15 @@
 
 ## Essay and History
 
-* [Dungeon Hacks: How NetHack, Angband, and Other Roguelikes Changed the Course of Video Game](dungeon_hacks.md), Press Start Press (2015)
 * [Idea Makers: Personal Perspectives on the Lives & Ideas of Some Notable People](idea_makers.md), Wolfram Media, Inc. (2016)
 * [Masterminds of Programming](masterminds_of_programming.md), O'Reilly (2009)
+
+## Game Development
+
+* [Dungeon Hacks: How NetHack, Angband, and Other Roguelikes Changed the Course of Video Game](dungeon_hacks.md), Press Start Press (2015)
+* [Game Programming Patterns](game_programming_patterns.md), Genever Benning (2014)
+* [Making Games for the Atari 2600](making_games_for_the_atari_2600.md), CreateSpace (2016)
+* [Making Great Games](making_great_games.md), Focal Press (2011) translation
 
 ## Mobile
 
@@ -41,7 +49,6 @@
 * [Beginning Haskell: A Project-Based Approach](beginning_haskell_a_project_based_approach.md), Apress (2014)
 * [Erlang and OTP in Action](erlang_and_otp_in_action.md), Manning (2011) 
 * [Fluent Python](fluent_python.md), O'Reilly (2015)
-* [Game Programming Patterns](game_programming_patterns.md), Genever Benning (2014)
 * [Haskell Programming from first principles](haskell_programming_from_first_principles.md), (not yet)
 * [Just Spring](just_spring.md), O'Reily (2011)
 * [Learn You a Haskell for Great Good!](learn_you_a_haskell_for_great_good.md), No Starch Press (2014)
@@ -58,8 +65,9 @@
 * [Redis Essentials](redis_essentials.md), Packt Publishing (2015)
 * [SCALA for the Impatient](scala_for_the_impatient.md), Addison-Wesley (2012) translation
 * [Type-Driven Development with Idris](type_driven_development_with_idris.md), Manning (2017)
-* [正規表現 技術入門](introduction_to_regular_expression.md), 技術評論社 (2015) translation
+* [ゼロから作るDeep Learning](deep_learning_from_scratch.md), オライリージャパン (2016) translation
 * [はじめてのSpring Boot](first_spring_boot.md), 工学社 (2014) translation
+* [正規表現 技術入門](introduction_to_regular_expression.md), 技術評論社 (2015) translation
 
 ## Simulation
 
@@ -70,6 +78,7 @@
 
 * [Building Maintainable Software: Ten Guidelines for Future-Proof Code](https://github.com/deliberate-practice/agile), O'Reilly (2016)
 * [Peopleware: Productive Projects and Teams](https://github.com/deliberate-practice/agile), Addison-Wesley (3rd ed, 2013) translation
+* [Smart and Gets Things Done](smart_and_gets_things_done.md), Apress (2007) translation
 
 ## Web
 
