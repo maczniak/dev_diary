@@ -15,6 +15,11 @@
 
 * [Graphing Data with R](graphing_data_with_r.md), O'Reilly (2016)
 
+## Database
+
+* [Mastering RethinkDB](mastering_rethinkdb.md), Packt Publishing (2016)
+* [Understanding MySQL Internals](understanding_mysql_internals.md), O'Reilly (2007)
+
 ## Essay and History
 
 * [Idea Makers: Personal Perspectives on the Lives & Ideas of Some Notable People](idea_makers.md), Wolfram Media, Inc. (2016)
@@ -38,11 +43,13 @@
 
 * [Advanced Content Delivery Streaming, and Cloud Services](advanced_content_delivery_streaming.md), Wiley (2014)
 * [Linux Kernel Networking: Implementation and Theory](linux_kernel_networking.md), Apress (2013)
+* [TCP/IP Illustrated, Volume 1, Second Edition](tcp_ip_illustrated_vol1_2nd.md), Addison-Wesley (2012)
 * [Understanding Linux Network Internals](understanding_linux_network_internals.md), O'Reilly (2006)
 
 ## Programming
 
 * [개미 수열을 푸는 10가지 방법](look_and_say_sequence_in_10_ways.md), Leanpub (2017)
+* [객체지향의 사실과 오해: 역할, 책임, 협력 관점에서 본 객체지향](essence_of_object_orientation.md), 위키북스 (2015)
 * [진짜 쉽고 쓸모 있는 언어 파이썬](really_easy_and_useful_language_python.md), 성안당 (2016)
 * [폴리글랏 프로그래밍](polyglot_programming.md), 한빛미디어 (2014)
 * [ANSI Common Lisp](ansi_common_lisp.md), Prentice Hall (1995)
@@ -50,14 +57,17 @@
 * [Erlang and OTP in Action](erlang_and_otp_in_action.md), Manning (2011) 
 * [Fluent Python](fluent_python.md), O'Reilly (2015)
 * [Haskell Programming from first principles](haskell_programming_from_first_principles.md), (not yet)
+* [Java Performance: The Definitive Guide](java_performance_the_definitive_guide.md), O'Reilly (2014) translation
 * [Just Spring](just_spring.md), O'Reily (2011)
 * [Learn You a Haskell for Great Good!](learn_you_a_haskell_for_great_good.md), No Starch Press (2014)
 * [Learn You Some Erlang for Great Good!](learn_you_some_erlang_for_great_good.md), No Starch Press (2013)
-* [Mazes for Programmers](mazes_for_programmers.md), The Pragmatic Programmers (2015)
+* [The Little Elixir & OTP Guidebook](little_elixir_and_otp_guidebook.md), Manning (2016)
 * [The Little Prover](little_prover.md), The MIT Press (2015)
 * [The Little Schemer, Fourth Edition](little_schemer_4th.md), The MIT Press (1995)
+* [Mazes for Programmers](mazes_for_programmers.md), The Pragmatic Programmers (2015)
 * [On Lisp](on_lisp.md), Prentice Hall (1993)
 * [Pearls of Functional Algorithm Design](pearls_of_functional_algorithm_design.md), Cambridge University Press (2010)
+* [Practical Object-Oriented Design in Ruby](practical_object_oriented_design_in_ruby.md), Addison-Wesley (2013)
 * [Pro Spring Boot](pro_spring_boot.md), Apress (2016)
 * [Purely Functional Data Structures](purely_functional_data_structures.md), Cambridge University Press (1998)
 * [Real World Haskell](real_world_haskell.md), O'Reilly (2008)
@@ -72,6 +82,7 @@
 ## Simulation
 
 * [An Introduction to Agent-Based Modeling](introduction_to_agent_based_modeling.md), The MIT Press (2015)
+* [Gravitational N-Body Simulations](gravitational_n_body_simulations.md), Cambridge University Press (2003)
 * [Introduction to the Modeling and Analysis of Complex Systems](introduction_to_the_modeling_and_analysis_of_complex_systems.md), Open SUNY Textbooks (2015)
 
 ## Software Engineering
@@ -84,7 +95,8 @@
 
 * [Developing Web Apps with Haskell and Yesod, 2nd Edition](developing_web_apps_with_haskell_and_yesod_2nd.md), O'Reilly (2015)
 * [HTML5 for Web Designers, Second Edition](html5_for_web_designers_2nd.md), A Book Apart (2016) translation
-* [ng-book 2](ng_book_2.md), fullstack.io (2015)
+* [Learning React](learning_react_aw.md), Addison-Wesley (2016)
+* [ng-book 2](ng_book_2.md), fullstack.io (2017)
 * [Two Scoops of Django: Best Practices for Django 1.8](two_scoops_of_django_1.8.md), Two Scoops Press (2015) translation
 * [Web Development with Node and Express](web_development_with_node_and_express.md), O'Reilly (2014) translation
 * [파이썬 웹 프로그래밍: Django(장고)로 배우는 쉽고 빠른 웹 개발](python_web_programming_django.md), 한빛미디어 (2015)
