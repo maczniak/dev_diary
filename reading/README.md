@@ -37,6 +37,7 @@
 * [Android Programming: The Big Nerd Ranch Guide (2nd edition)](android_programming_big_nerd_ranch_2nd.md), Big Nerd Ranch (2015)
 * [Head First Android Development](head_first_android_development.md), O'Reilly (2015)
 * [Hello, Android (Fourth Edition)](hello_android_4th.md), The Pragmatic Programmers (2015)
+* [iOS 10 App Development Essentials](ios_10_app_development_essentials.md), eBookFrenzy (2016)
 * [iOS Programming: The Big Nerd Ranch Guide (6th Edition)](ios_programming_the_big_nerd_ranch_guide_6th.md), Big Nerd Ranch (2016)
 
 ## Network
@@ -61,6 +62,7 @@
 * [Just Spring](just_spring.md), O'Reily (2011)
 * [Learn You a Haskell for Great Good!](learn_you_a_haskell_for_great_good.md), No Starch Press (2014)
 * [Learn You Some Erlang for Great Good!](learn_you_some_erlang_for_great_good.md), No Starch Press (2013)
+* [Learning Swift: Building Apps for macOS, iOS, and Beyond](learning_swift_2nd.md), O'Reilly (2017)
 * [The Little Elixir & OTP Guidebook](little_elixir_and_otp_guidebook.md), Manning (2016)
 * [The Little Prover](little_prover.md), The MIT Press (2015)
 * [The Little Schemer, Fourth Edition](little_schemer_4th.md), The MIT Press (1995)
@@ -91,11 +93,16 @@
 * [Peopleware: Productive Projects and Teams](https://github.com/deliberate-practice/agile), Addison-Wesley (3rd ed, 2013) translation
 * [Smart and Gets Things Done](smart_and_gets_things_done.md), Apress (2007) translation
 
+## System Administration
+
+* [Troubleshooting OpenVPN](troubleshooting_openvpn.md), Packt Publishing (2017)
+
 ## Web
 
 * [Developing Web Apps with Haskell and Yesod, 2nd Edition](developing_web_apps_with_haskell_and_yesod_2nd.md), O'Reilly (2015)
 * [HTML5 for Web Designers, Second Edition](html5_for_web_designers_2nd.md), A Book Apart (2016) translation
 * [Learning React](learning_react_aw.md), Addison-Wesley (2016)
+* [Mastering Full-Stack React Web Development](mastering_fullstack_react_web_development.md), Packt Publishing (2017)
 * [ng-book 2](ng_book_2.md), fullstack.io (2017)
 * [Two Scoops of Django: Best Practices for Django 1.8](two_scoops_of_django_1.8.md), Two Scoops Press (2015) translation
 * [Web Development with Node and Express](web_development_with_node_and_express.md), O'Reilly (2014) translation

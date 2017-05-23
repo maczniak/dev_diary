@@ -160,7 +160,75 @@ An alternative way to eliminate these side effects is to avoid the problem from
 
 ## 4. Creating Flexible Interfaces
 
+The roots of this new problem lie not in what each class *does* but with what it
+ *reveals*. These exposed methods comprise the class's *public interface*. This
+ chapter will address the first kind of interface, that is, methods within a
+ class and how and what to expose to others. The next chapter explores the
+ second kind of interface, the one that represents a concept that is broader
+ than a class and is defined by a set of messages.<br>
+Indead, public methods should read like a description of responsibilities.<br>
+These classes spring to mind because they represent *nouns* in the application
+ that have both *data* and *behavior*. Call them *domain objects*. Domain
+ objects are easy to find but they are not at the design center of your
+ application. If you fixate on domain objects you will tend to coerce behavior
+ into them. Design experts focus not on these objects but on the messages that
+ pass between them. These messages are guides that lead you to discover other
+ objects, ones that are just as necessary but far less obvious.<br>
+These is a perfect, low-cost way to experiment with objects and messages:
+ *sequence diagrams*. Sequence diagrams are defined in the Unified Modeling
+ Language (UML) and are one of many diagrams that UML supports.<br>
+Also, notice now that you have drawn a sequence diagram, this design
+ conversation has been inverted. Instead of deciding on a class and then
+ figuring out its responsibilities, you are now deciding on a message and
+ figuring out where to send it. This transition from class-based design to
+ message-based design is a turning point in your design career. Changing the
+ fundamental design question from "I know I need this class, what should it do?"
+ to "I need to send this message, who should respond to it?" is the first step
+ in that direction.<br>
+The distinction between a mesage that asks for what the sender wants and a
+ message that tells the receiver how to behave may seem subtle but the
+ consequences are significant. When the conversation between `Trip` and
+ `Mechanic` switched from a *how* to a *what*, one side effect was that the size
+ of the public interface in `Mechanic` was drastically reduced.<br>
+The things that `Trip` knows about other objects make up its *context*. The
+ context that an object expects has a direct effect on how difficult it is to
+ reuse. The best possible situation is for an object to be completely
+ independent of its context.<br>
+Expanding in this idea, `Trip` could place a number of such objects into an
+ array and send each the `prepare_trip` message, trusting every preparer to do
+ whatever it does because of the kind of thing that it is. This pattern allows
+ you to add newly introduced preparers to `Trip` without changing any of its
+ code, that is, you can *extend* `Trip` without *modifying* it.<br>
+If objects were human and could describe their own relationships, in Figure 4.5
+ `Trip` would be telling `Mechanic`: "I know what I want and I know how you do
+ it;" in Figure 4.6: "I know what I want and I know whay you do" and in Figure
+ 4.7: "I know what I want and *I trust you to do your part*." This blind trust
+ is a keystone of object-oriented design. It allows objects to collaborate
+ without binding themselves to context and is necessary in any application that
+ expects to grow and change.<br>
+Either do not test private methods or, if you must, segregate those tests from
+ the tests of public methods. Do not allow your tests to fool others into
+ unintentionally depending on the changeable, private interface.<br>
+Ruby provides three relevant keywords: `public`, `protected`, and `private`. Use
+ of these keywords serves two distinct purposes. First, they indicate which
+ methods are stable and which are unstable. Second, they control how visible a
+ method is to other parts of your application.<br>
+The Law of Demeter (LoD) is a set of coding rules that results in loosely
+ coupled objects. Demeter restricts the set of objects to which a method may
+ *send* messages; it prohibits routing a message to a third object via a second
+ object of a different type. Demeter is often paraphrased as "only talk to your
+ immediate neighbors" or "use only one dot." Demeter is trying to tell you
+ something and it isn't "use more delegation."
+
 ## 5. Reducing Costs with Duck Typing
+
+Duck types are public interfaces that are not tied to any specific class. Duck
+ typed objects are chameleons that are defined more by their behavior than by
+ their class.<br>
+Class is just one way for an object to acquire a public interface; the public
+ interface an object obtains by way of its class may be one of several that it
+ contains. Applications may define many public interfaces that are not related
+ to one specific class; these interfaces cut across class.
 
 ## 6. Acquiring Behavior Through Inheritance
 

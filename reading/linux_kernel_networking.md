@@ -20,7 +20,7 @@ Documentation/{SubmittingPatches,CodingStyle,networking}<br>
 http://git.kernel.org/?p=linux/kernel/git/davem/{net,net-next}.git<br>
 http://lxr.free-electrons.com/ http://lxr.sourceforge.net/en/index.shtml
 
-## 2. NEtlink Sockets
+## 2. Netlink Sockets
 
 ## 3. Internet Control Message Protocol (ICMP)
 

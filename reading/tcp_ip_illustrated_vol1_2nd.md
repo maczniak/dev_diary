@@ -1046,7 +1046,7 @@ In stateful translation, *NAT64* RFC6146 is used to support IPv6-only clients
 [rfc5626]: https://tools.ietf.org/html/rfc5626
 [xep-0176]: https://xmpp.org/extensions/xep-0176.html
 [rfc6120]: https://tools.ietf.org/html/rfc6120
-[trickle_ice]: https://tools.ietf.org/html/draft-ietf-ice-trickle-08
+[trickle_ice]: https://tools.ietf.org/html/draft-ietf-ice-trickle-10
 [netfilter]: http://netfilter.org/
 [upnp]: https://openconnectivity.org/
 [rfc6886]: https://tools.ietf.org/html/rfc6886
