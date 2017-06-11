@@ -140,8 +140,9 @@ Inportant examples of scopes include *node-local*, *link-local*, or *global*.
  (*site-local* scope level was deprecated.)
 
 IPv4 special-use addresses ([RFC5735][rfc5735])
+
 Prefix             | Special Use | Reference
--------------------+-------------+----------
+-------------------|-------------|----------
 0.0.0.0/8          | Hosts on the local network. May be used only as a source IP address. | [RFC1122][rfc1122]
 10.0.0.0/8         | Address for private networks (intranets). Such addresses never appear on the public Internet. | [RFC1918][rfc1918]
 127.0.0.0/8        | Internet host loopback addresses (same computer). Typically only 127.0.0.1 is used. | RFC1122
@@ -160,8 +161,9 @@ ver appear on the public Internet. | RFC1918
 255.255.255.255/32 | Local network (limited) broadcast address. | RFC0919 [RFC0922][rfc0922]
 
 IPv6 special-use addresses ([RFC5156][rfc5156]
+
 Prefix              | Special Use | Reference
---------------------+-------------+----------
+--------------------|-------------|----------
 ::/0                | Default route entry. Not used for addressing. | RFC5156
 ::/128              | The unspecified address; may be used as a source IP address. | RFC4291
 ::1/128             | The IPv6 host loopback address; not used in datagrams sent outside the local host. | RFC4291

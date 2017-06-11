@@ -241,7 +241,7 @@ A decorator is a callable that takes another function as argument, and is execut
 a variable assigned in the body of a function is local, then you may need `global`. the nature of the variable--whether it is local or not--cannot change in the body of the function.<br>
 a closure is a function with an extended scope that encompasses nonglobal variables referenced in the body of the function but not defined there. the `nonlocal` declaration (introduced in Python 3, [PEP 3104][pep_3104]) lets you flag a variable as a free variable even when it is assigned a new value within the function. fn.`__code__.co_freevars` (vs fn.`__code__.co_varnames`), fn.`__closure__[0].cell_contents`<br>
 built-in `property`, `classmethod`, `staticmethod`<br>
-`functools.wraps` (helper that copies the relevant attributes from a decorated function), `.lru_cache` (memoization), `.singledispatch` (generic function, depending on the type of the first argument, `@<base_function>.register(<type>)`, Python 3.4 [PEP 443][pep_443], old singledispatch package)<br>
+`functools.wraps` (helper that copies the relevant attributes from a decorated function, to make a wrapper function to look like the wrapped function), `.lru_cache` (memoization), `.singledispatch` (generic function, depending on the type of the first argument, `@<base_function>.register(<type>)`, Python 3.4 [PEP 443][pep_443], old singledispatch package)<br>
 parameterized decorators - use a decorator factory, `@clock()` instead of `@clock`<br>
 Some argue that decorators are best coded as classes implementing `__call__`, and not as functions like the examples in this book.<br>
 Graham Dumpleton's [decorator blog posts][graham_dumpleton_decorator_blog] and [wrapt][wrapt] module, [decorator package][decorator_package], Python Wiki [PythonDecoratorLibrary][python_decorator_library], [Five-minute Multimethods in Python][five_minute_multimethods_in_python] about single-dispatch generic functions, [Reg][reg] ([Morepath][morepath] web framework) for multiple-dispatch generic functions, [Closures in Python][closures_in_python], [PEP 227][pep_227] Statically Nested Scopes<br>
@@ -633,19 +633,244 @@ When I see patterns in my programs, I consider it a sign of trouble. The shape
  of some macro that I need to write. -- Paul Graham,
  [Revenge of the Nerds][revenge_of_the_nerds]<br>
 Python does not have macros like Lisp, so abstracting away the Interator
- pattern required changing the language: the `yield` keyword was  added in
- Python 2.2 (`__future__` in Python 2.1). The yield keyword allows the
- construction of generators, which work as iterators (that retrieves items from
- a collection). Every generator is an iterator: generators fully implement the
- iterator interface.<br>
-Every collection in Pythin is iterable. (for example, tuple unpacking and
- unpacking actual parameters with `*` in function calls)
+ pattern required changing the language: the `yield` keyword was added in Python
+ 2.2 (`__future__` in Python 2.1). The yield keyword allows the construction of
+ generators, which work as iterators (that retrieves items from a collection).
+ Every generator is an iterator: generators fully implement the iterator
+ interface.<br>
+Every collection in Python is iterable. (for example, tuple unpacking and
+ unpacking actual parameters with `*` in function calls)<br>
+Whenever the interpreter needs to iterate over an object `x`, it automatically
+ calls `iter(x)`. The `iter` built-in function:
+1. Checks whether the object implements `__iter__`, and calls that to obtain an
+   iterator.
+1. If `__iter__` is not implemented, but `__getitem__` is implemented, Python
+   creates an iterator that attempts to fetch items in order, starting from
+   index 0.
+1. If that fails, Python raises `TypeError`, usually saying "*C* object is not
+   iterable."
+
+The standard interface for an iterator has two methods. `__next__` returns the
+ next avaiable item, raising `StopIteration` when there are no more itms. This
+ exception is handled internally in `for` loops and other iteration contexts
+ like list comprehensions, tuple unpacking, etc. `__iter__` returns `self`; this
+ allows iterators to be used where an iterable is expected, for example, in a
+ `for` loop.<br>
+A generator expression (`(x*3 for x in gen_AB())`) can be understood as a lazy
+ version of a list comprehension. When a generator expression is passed as the
+ single argument to a function or constructor, you don't need to write a set of
+ parentheses.<br>
+`itertools.takewhile(lambda n: n < 3, itertools.count(1, .5))`<br>
+`itertools.islice(it, stop)` or `itertools.islice(it, start, stop, step=1)` is
+ similar to `s[:stop]` or `s[start:stop:step]` except `it` can be any iterable,
+ and the operation is lazy.<br>
+`itertools.combinations('ABC', 2)`,
+ `itertools.combinations_with_replacement('ABC', 2)`, (with the order)
+ `itertools.permutations('ABC', 2)`, `itertools.product('ABC', repeat=2)`<br>
+`iter` can be called with two arguments to create an iterator from a regular
+ function or any callable object. In this usage, the first argument must be a
+ callable to be invoked repeatedly (with no arguments) to yield values, and the
+ second argument is a sentinel: a marker value which, when returned by the
+ callable, causes the iterator to raise `StopIteration` instead of yielding the
+ sentinel.<br>
+Like `.__next__()`, `.send()` causes the generator to advance to the next
+ `yield`, but it also allows the client using the generator to send data into
+ it: whatever argument is passed to `.send()` becomes the value of the
+ corresponding `yield` expression inside the generator function body. This is
+ such a major "enhancement" that it actually changes the nature of generators:
+ when used in this way, they become *coroutines*. Despite some similarities,
+ generators and coroutines are basically two different concepts.<br>
+Beazley's
+ [A Curious Course on Coroutines and Concurrency][curious_course_on_coroutines_and_concurrency] (video
+ [1][curious_course_on_coroutines_and_concurrency_video_1],
+ [2][curious_course_on_coroutines_and_concurrency_video_2],
+ [3][curious_course_on_coroutines_and_concurrency_video_3])
+ [Itertools Recipes][itertools_recipes],
+ [Python: The Full Monty: A Tested Semantics for the Python Programming Language][python_the_full_monty]
 
 [revenge_of_the_nerds]: http://www.paulgraham.com/icad.html
+[curious_course_on_coroutines_and_concurrency]: http://www.dabeaz.com/coroutines/
+[curious_course_on_coroutines_and_concurrency_video_1]: http://pyvideo.org/video/213
+[curious_course_on_coroutines_and_concurrency_video_2]: http://pyvideo.org/video/215
+[curious_course_on_coroutines_and_concurrency_video_3]: http://pyvideo.org/video/214
+[itertools_recipes]: https://docs.python.org/3/library/itertools.html#itertools-recipes
+[python_the_full_monty]: https://cs.brown.edu/~sk/Publications/Papers/Published/pmmwplck-python-full-monty/
 
 ### Chapter 15: Context Managers and else Blocks
 
+The semantics of `for/else`, `while/else`, and `try/else` are closely related,
+ but very different from `if/else`. The `else` clause is skipped if an exception
+ or a `return`, `break`, or `continue` statement causes control to jump out of
+ the main block of the compound statement.<br>
+EAFP (easier to ask for forgiveness than permission, by Grace Hopper). This
+ common Python coding style assumes the existence of valid keys or attributes
+ and catches exceptions if the assumption proves false. The technique contrasts
+ with the LBYL (look before you leap) style common to many other languages such
+ as C.<br>
+The context manager protocol consists of the `__enter__` and `__exit__` methods.
+ `with` blocks don't define a new scope, as functions and modules do. The
+ context manager object is the result of evaluating the expression after `with`,
+ but the value bound to the target variable (in the `as` clause) is the result
+ of called `__enter__` on the context manager object. When control flow exists
+ the `with` block in any way, the `__exit__` method is invoked on the context
+ manager object, not on whatever is returned by `__enter__`. If `__exit__`
+ returns `None` or anything but `True`, any exception raised in the `with` block
+ will be propagated. The three arguments are exactly what you get if you call
+ `sys.exc_info()` in the `finally` block. This makes sense, considering that the
+ `with` statement is meant to replace most uses of `try/fianlly`.<br>
+`contextlib` module:
+* `redirect_stdout` - just pass it the file-like object that will stand in for
+  `sys.stdout`
+* `closing` - build context managers out of objects that provide a `close()`
+  method
+* `suppress` - a context manager to temporarily ignore specified exceptions
+* `@contextmanager` - a [decorator][contextmanager_implementation] that lets you
+  build a context manager from a simple generator function. you just implement a
+  generator with a single `yield` that should produce whatever you want the
+  `__enter__` method to return. Having a `try/finally` (or a `with` block)
+  around the `yield` is an unavoidable price of using `@contextmanager`, because
+  you never know what the users of your context manager are going to do inside
+  their `with` block. The `@contextmanager` decorator is an elegant and
+  practical tool that brings together three distinctive Python features: a
+  function decorator, a generator, and the `with` statement.
+* `ExitStack` - a context manager that lets you enter a variable number of
+  context managers. When the `with` block ends, `ExitStack` calls the stanked
+  context managers' `__exit__` methods in LIFO order.
+
+*Python Cookbook, 3E* "Recipe 8.3" implements a `LazyConnection` class whose
+ instances are context managers that open and close network connections
+ automatically in `with` blocks. "Recipe 9.22" introduces a context manager for
+ timing code, and another for making transactional changes to a `list`
+ object.<br>
+You can factor out B in a subroutine. But what if you want to factor out the
+ bread, to make sandwiches with wheat bread, using a different filling each
+ time? That's what the `with` statement offers. It's the complement of the
+ subroutine.<br>
+[What Makes Python Awesome][what_makes_python_awesome] (PyCon US 2013 keynote,
+ [slide][what_makes_python_awesome_slide]),
+ [Easy in-place file rewriting][easy_inplace_file_rewriting] example,
+ [Transforming code into Beautiful, Idiomatic Python][transforming_code_into_beautiful_idiomatic_python],
+ [The Python "with" Statement by Example][python_with_statement_by_example]
+
+[contextmanager_implementation]: https://hg.python.org/cpython/file/3.4/Lib/contextlib.py#l34
+[what_makes_python_awesome]: http://pyvideo.org/pycon-us-2013/keynote-3.html
+[what_makes_python_awesome_slide]: https://speakerdeck.com/pyconslides/pycon-keynote-python-is-awesome-by-raymond-hettinger
+[easy_inplace_file_rewriting]: http://www.zopatista.com/python/2013/11/26/inplace-file-rewriting/
+[transforming_code_into_beautiful_idiomatic_python]: https://speakerdeck.com/pyconslides/transforming-code-into-beautiful-idiomatic-python-by-raymond-hettinger-1
+[python_with_statement_by_example]: http://preshing.com/20110920/the-python-with-statement-by-example/
+
 ### Chapter 16: Coroutines
+
+In addition to `.send(...)`, PEP 342 (Python 2.5, 2006) also added `.throw(...)`
+ and `.close(...)` methods. [PEP 380][pep_380] (Python 3.3, 2012) made two
+ syntax changes to generator function, to make them more useful as coroutines. A
+ generator can now `return` a value; previously, providing a value to the
+ `return` statement inside a generator raised a `SyntaxError`. (The value of the
+ `return` expression is smuggled to the caller as the `value` attribute of the
+ `StopIteration` exception.) The `yield from` syntax enabled complex generators
+ to be refactored into smaller, nested generators while avoiding a lot of
+ boilerplate code previously required for a generator to delegate to
+ subgenerators. (In the case of `yield from`, the interpreter not only consumes
+ the `StopIteration`, but its `value` attribue becomes the value of the
+ `yield from` expression itself.)<br>
+A coroutine can be in one of four states. You can determine the current state
+ using the `inspect.getgeneratorstate(...)` function.<br>
+The initial call `next(my_coro)` is often described as "priming" the coroutine.
+ You can also call `my_coro.send(None)`, and the effect is the same.<br>
+If the exception is handled by the generator, flow advances to the next `yield`,
+ and the value yielded becomes the value of the `generator.throw` call. If the
+ expression is not handled by the generator, it propagates to the context of the
+ caller. One of the main reasons why the `yield from` construct was added has to
+ do with throwing exceptions into nested coroutines. `generator.close()` causes
+ the `yield` expression where the generator was paused to raise a
+ `GeneratorExit` exception. No error is reported to the caller if the generator
+ does not handle that exception or raises `StopIteration`--usually by running to
+ completion. When receiving a `GeneratorExit`, the generator must not yield a
+ value, otherwise a `RuntimeError` is raised. If any other exception is raised
+ by the generator, it propagates to the caller.<br>
+The first thing to know about `yield from` is that it is a completely new
+ language construct. Similar constructs in other languages are called `await`,
+ and that is a much better name because it conveys a crucial point: when a
+ generator `gen` calls `yield from subgen()`, the `subgen` takes over and will
+ yield values to the caller of `gen`; the caller will in effect drive `subgen`
+ directly. Meanwhile `gen` will be blocked, waiting until `subgen` terminates.
+ The main feature of `yield from` is to open a bidirectional channel from the
+ outmost caller to the innermost subgenerator, so that values can be sent and
+ yielded back and forth directly from them, and exceptions can be thrown all the
+ way in without adding a lot of exception handling boilerplate code in the
+ intermediate coroutines.<br>
+caller (client) - delegating generator - subgenerator<br>
+Almost all he `yield from` examples I've seen are tied to asynchronous
+ programming with the `asyncio` module, so they depend on an active event loop
+ to work.<br>
+[SimPy][simpy] is a DES ([discrete event simulation][discrete_event_simulation])
+ package for Python that uses one coroutine to represent each process in the
+ simulation. Priority queues are a fundamental building block of discrete event
+ simulations.
+ ([Writing a Discrete Event Simulation: ten easy lessons][writing_a_discrete_event_simulation])
+ / [SymPy][sympy] is a library for symbolic mathematics.<br>
+In the console, the `_` variable is bound to the last result.<br>
+`asyncio` coroutines are (usually) decorated with an `@asyncio.coroutine`
+ decorator, and they are always driven by `yield from`, not by calling
+ `.send(...)` directly on them.<br>
+[PEP 492][pep_492] (Python 3.5) proposes the addition of two keywords: `async`
+ and `await`. The former will be used with other existing keywords to define new
+ language constructs. For example, `async def` will be used to define a
+ coroutine, and `async for` to loop over asynchronous iterables with
+ asynchronous iterators (implementing `__aiter__` and `__anext__`, coroutine
+ versions of `__iter__` and `__next__`). To avoid conflict with the upcoming
+ `async` keyword, the essential function `asyncio.async()` will be renamed
+ `asyncio.ensure_future()` in Python 3.4.4. The `await` keyword will do
+ something similar to `yield from`, but will only be allowed inside coroutines
+ defined with `async def`--where the use of `yield` and `yield from` will be
+ forbidden. With new syntax, the PEP establishes a clear separation between the
+ legacy generators that evolved into coroutine-like objects and a new breed of
+ native coroutine objects.
+
+[ipython-yf][ipyhton_yf] (iPython extension that enables evaluating `yield from`
+ directly in the iPython console, it's a syntax error to use `yield` outside of
+ a function), [flatten example][flatten_example],
+ [How Python 3.3 "yield from" construct works][how_python_3_3_yield_from_construct_works],
+ Beazley's
+ [Generator Tricks for Systems Programmers][generator_tricks_for_system_programmers]
+ and [Generators: The Final Frontier][generators_the_final_frontier],
+ [Greedy algorithms with coroutines][greedy_algorithms_with_coroutines],
+ [Popular recipes tagged *coroutine*][popular_recipes_tagged_coroutine],
+ [MicroPython][micropython], [Greg Ewing's examples][greg_ewing_examples],
+ [Effective Python, Item 40: Consider Coroutines to Run Many Functions Concurrently][effective_python_item_40]
+ ([source code][effective_python_item_40_src]),
+ [Comparing two CSV files using Python][comparing_two_csv_files_using_python],
+ [Iterables, Iterators and Generators][iterables_iterators_and_generators],
+ [The difference between yield and yield-from][difference_between_yield_and_yield_from],
+ [PEP 380 (yield from a subgenerator) comments][pep_380_comments],
+ [The Value Of Syntax?][the_value_of_syntax] from
+ [Lambda the Ultimate][lambda_the_ultimate],
+ [What Color is Your Function?][what_color_is_your_function]
+
+[pep_380]: https://www.python.org/dev/peps/pep-0380/
+[simpy]: https://simpy.readthedocs.io/en/latest/
+[discrete_event_simulation]: https://en.wikipedia.org/wiki/Discrete_event_simulation
+[writing_a_discrete_event_simulation]: http://www.cs.northwestern.edu/~agupta/_projects/networking/QueueSimulation/mm1.html
+[sympy]: http://www.sympy.org/en/index.html
+[pep_492]: https://www.python.org/dev/peps/pep-0492/
+[ipython_yf]: https://github.com/tecki/ipython-yf
+[flatten_example]: https://github.com/dabeaz/python-cookbook/blob/master/src/4/how_to_flatten_a_nested_sequence/example.py
+[how_python_3_3_yield_from_construct_works]: http://flupy.org/resources/yield-from.pdf
+[generator_tricks_for_system_programmers]: http://www.dabeaz.com/generators/
+[generators_the_final_frontier]: http://www.dabeaz.com/finalgenerator/
+[greedy_algorithms_with_coroutines]: http://seriously.dontusethiscode.com/2013/05/01/greedy-coroutine.html
+[popular_recipes_tagged_coroutine]: https://code.activestate.com/recipes/tags/coroutine/
+[micropython]: http://micropython.org/
+[greg_ewing_examples]: http://www.cosc.canterbury.ac.nz/greg.ewing/python/yield-from/yield_from.html
+[effective_python_item_40]: http://www.effectivepython.com/2015/03/10/consider-coroutines-to-run-many-functions-concurrently/
+[effective_python_item_40_src]: https://gist.github.com/ramalho/da5590bc38c973408839
+[comparing_two_csv_files_using_python]: https://mail.python.org/pipermail/tutor/2015-February/104200.html
+[iterables_iterators_and_generators]: http://nbviewer.jupyter.org/github/wardi/iterables-iterators-generators/blob/master/Iterables,%20Iterators,%20Generators.ipynb
+[difference_between_yield_and_yield_from]: https://groups.google.com/forum/#!msg/python-tulip/bmphRrryuFk/aB45sEJUomYJ
+[pep_380_comments]: https://mail.python.org/pipermail/python-dev/2009-March/087382.html
+[the_value_of_syntax]: http://lambda-the-ultimate.org/node/4295
+[lambda_the_ultimate]: http://lambda-the-ultimate.org/
+[what_color_is_your_function]: http://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/
 
 ### Chapter 17: Concurrency with Futures
 

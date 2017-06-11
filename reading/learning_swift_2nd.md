@@ -164,7 +164,7 @@ if let URL = URL(string: "https://oreilly.com") {
     // see also AlamoFire, https://github.com/Alamofire/Alamofire
 }
 if let filePath = Bundle.main.path(forResource: "SomeFile", ofType: "txt") {
-    let loadedDataFrom PAth = NSData(contentsOfFile:filePath)
+    let loadedDataFrom Path = NSData(contentsOfFile:filePath)
 }
 
 class SerializableObject : NSObject, NSCoding {
@@ -207,7 +207,7 @@ The application deligate object--usually shortened to *app delegate*--is just an
 It uses the macOS document model, which means that it gets a number of useful
  behaviors for free, including versioning and autosave, plus the ability to
  associate its document types with the app.<br>
-[Document-Based App Programming Guide for Mac][cocoa_document_architecture],
+[Document-Based App Programming Guide for Mac][document_based_app_programming_guide_for_mac],
  [Core Data Programming Guide][core_data_programming_guide]<br>
 The limits of Core Data are quite easy to hit, and it's often more useful, as
  well as more of a learning experience, to build storage infrastructure for your
@@ -281,7 +281,17 @@ We'll use *bindings*, which link the value of a user interface element, such as
 ### 6. User Interfaces and iCloud
 
 `NSCollectionView` is provided by AppKit to display a grid of other views. Each
- view it displays is managed by an `NSCollectionViewItem`.
+ view it displays is managed by an `NSCollectionViewItem`.<br>
+If you are wondering what the `takeRetainedValue()` function is doing, or why we
+ have these weird-looking values like `kUTTagClassFilenameExtension`, it's
+ because this code is using some libraries that are written in the C programming
+ language, not in Swift. We need to jump through a few hoops and use some weird
+ syntax to get the two languages to play nicely with each other.<br>
+`self.willChangeValue(forKey: "attachedFiles")` →
+ `self.updateChangeCount(.changeDone)` →
+ `self.didChangeValue(forKey: "attachedFiles")`<br>
+The `dynamic` keyword here indicates to any other object that's watching the
+ variable for changes that it can be changed by other parts of the object.
 
 ## Part III. An iOS App
 

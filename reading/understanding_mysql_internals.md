@@ -239,13 +239,13 @@ What InnoDB actually locks is the index entry, the space before it, and the
 ## 9. Parser and Optimizer
 
 Prior to version 5.0, only the exhaustive search (*n*! combinations) was
- available. Version 5.0 implemented the greedy search (`optimizer_search_depth`!
- * (*n* - `optimizer_search_depth`) combinations). The join is performed via a
- sequence of nested loops, starting from the first table. For ech record of the
- first table, the optimizer loops through the second to create combinations. The
- combination is then compared against the `WHERE` clause of the query--or more
- precisely, the optimized filter expression generated from the original `WHERE`
- clause.<br>
+ available. Version 5.0 implemented the greedy search
+ (`optimizer_search_depth`! * (*n* - `optimizer_search_depth`) combinations).
+ The join is performed via a sequence of nested loops, starting from the first
+ table. For ech record of the first table, the optimizer loops through the
+ second to create combinations. The combination is then compared against the
+ `WHERE` clause of the query--or more precisely, the optimized filter expression
+ generated from the original `WHERE` clause.<br>
 The purpose of the `\G` switch at the end of the query is to request that the
  result set be displayed vertically. The output of `EXPLAIN` contains a lot of
  columns, which often makes the default mode of horizontal output

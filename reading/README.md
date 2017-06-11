@@ -81,7 +81,7 @@
 * [はじめてのSpring Boot](first_spring_boot.md), 工学社 (2014) translation
 * [正規表現 技術入門](introduction_to_regular_expression.md), 技術評論社 (2015) translation
 
-## Simulation
+## Simulation and Modeling
 
 * [An Introduction to Agent-Based Modeling](introduction_to_agent_based_modeling.md), The MIT Press (2015)
 * [Gravitational N-Body Simulations](gravitational_n_body_simulations.md), Cambridge University Press (2003)
