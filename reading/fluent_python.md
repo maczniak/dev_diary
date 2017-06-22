@@ -827,7 +827,7 @@ In the console, the `_` variable is bound to the last result.<br>
  legacy generators that evolved into coroutine-like objects and a new breed of
  native coroutine objects.
 
-[ipython-yf][ipyhton_yf] (iPython extension that enables evaluating `yield from`
+[ipython-yf][ipython_yf] (iPython extension that enables evaluating `yield from`
  directly in the iPython console, it's a syntax error to use `yield` outside of
  a function), [flatten example][flatten_example],
  [How Python 3.3 "yield from" construct works][how_python_3_3_yield_from_construct_works],
@@ -874,7 +874,101 @@ In the console, the `_` variable is bound to the last result.<br>
 
 ### Chapter 17: Concurrency with Futures
 
+`concurrent.futures` library (Python 3.2), [futures][futures_package] package
+ (Python 2.5)<br>
+The main features of the `concurrent.futures` package are the
+ `ThreadPoolExecutor` and `ProcessPoolExecutor` classes. The `executor.__exit__`
+ method will call `executor.shutdown(wait=True)`, which will block until all
+ threads are done. If any of the threaded calls raised an exception, that
+ exception would be raised here (`list(res)`) as the implicit `next()` call
+ tried to retrieve the corresponding return value from the iterator.<br>
+Futures are essential components in the internals of `concurrent.futures` and of
+ `asyncio`, ut as users of these libraries we sometimes don't see them. As of
+ Python 3.4, there are two classes named `Future` in the standard library:
+ `concurrent.futures.Future` and `asyncio.Future`. This is similar to the
+ `Deferred` class in Twisted, the `Future` class in Tornado, and `Promise`
+ objects in various JavaScript libraries. Both types of `Future` have a
+ `.done()` method that is nonblocking and returns a Boolean that tells you
+ whether the callable linked to that future has executed or not. Instead of
+ asking whether a future is done, client code usually asks to be notified.
+ That's why both `Future` classes have an `.add_done_callback()` method. When
+ the future is not done, the behavior of the `result` method is very different
+ between the two flavors of `Future`. In a `concurrent.futures.Future` instance,
+ invoking `f.result()` will block the caller's thread until the result is ready.
+ An optional `timeout` argument can be passed, and if the future is not done in
+ the specified time, a `TimeoutError` exception is raised. We'll see that the
+ `asyncio.Future.result` method does not support timeout, and the preferred way
+ to get the result of futures in that library is to use `yield from`--which
+ doesn't work with `concurrent.futures.Future` instances.<br>
+The CPython interpreter is not thread-safe internally, so it has a Global
+ Interpreter Lock (GIL), while allows only one thread at a time to execute
+ Python bytecodes. That's why a single Python process usually cannot use
+ multiple CPU cores at the same time. (This is a limitation of the CPython
+ interpreter, not of the Python language itself. Jython and IronPython are not
+ limited in this way; but Pypy, the fastest Python interpreter available, also
+ has a GIL.) When we write Python code, we have no control over the GIL, but a
+ built-in function or an extension written in C can release the GIL while
+ running time-consuming tasks. In fact, a Python library coded in C can manage
+ the GIL, launch its own OS threads, and take advantage of all available CPU
+ cores. Every blocking I/O function in the Python standard library releases the
+ GIL, allowing other threads to run. The `time.sleep()` function also releases
+ the GIL.<br>
+The set of futures you pass to `futures.as_completed` may come from more than
+ one executor--perfhaps some were created by a `ThreadPoolExecutor` instance
+ while others are from a `ProcessPoolExecutor`.<br>
+In Python 3, the original `thread` module was deprecated (renamed to `_thread`
+ to highlight the face that it's just a low-level implementation detail) in
+ favor of the higher-level `threading` module. The `multiprocessing` package
+ emulates the `threading` API but delegates jobs to multiple processes.
+ `multiprocessing` also offers facilities to solve the biggest challenge faced
+ by collaborating processes: how to pass around data.<br>
+In PEP 3148, Quinlan wrote that the `concurrent.futures` library was "heavily
+ influenced by the Java `java.util.concurrent` package." `multiprocessing` is
+ the basis for the `concurrent.futures.ProcessPoolExecutor`. The [`lelo`][lelo]
+ package defines a `@parallel` decorator that you can apply to any function to
+ magically make it unblocking: when you call the decorated function, its
+ execution is started in another process.
+ [python-parallelize][python_parallelize] package provides a `parallelize`
+ generator that you can use to distribute the execution of a `for` loop over
+ multiple CPUs. Both packages use the `multiprocessing` module under the covers.
+
+[Threads, processes and concurrency in Python: some thoughts][threads_processes_and_concurrency_in_python],
+ [Generators: The Final Frontier][generators_the_final_frontier],
+ [tqdm][tqdm] (add a progress meter to your loops),
+ [PyConAU 2010: The future is soon!][the_future_is_soon],
+ [Can’t we get rid of the Global Interpreter Lock?][cant_we_get_rid_of_the_gil],
+ [It isn't Easy to Remove the GIL][it_isnt_easy_to_remove_the_gil],
+ [Python Threads and the Global Interpreter Lock][python_threads_and_the_global_interpreter_lock],
+ [Understanding the Python GIL][understanding_the_python_gil]
+ ([slide][understanding_the_python_gil_slide]),
+ [embarrassingly parallel][embarrassingly_parallel] (Wikipedia)
+
+[futures_package]: https://pypi.python.org/pypi/futures/
+[lelo]: https://pypi.python.org/pypi/lelo
+[python_parallelize]: https://github.com/npryce/python-parallelize
+[threads_processes_and_concurrency_in_python]: http://www.artima.com/weblogs/viewpost.jsp?thread=299551
+[generators_the_final_frontier]: http://www.dabeaz.com/finalgenerator/
+[tqdm]: https://github.com/noamraph/tqdm
+[the_future_is_soon]: http://pyvideo.org/pycon-au-2010/pyconau-2010--the-future-is-soon.html
+[cant_we_get_rid_of_the_gil]: https://docs.python.org/3/faq/library.html#id18
+[it_isnt_easy_to_remove_the_gil]: http://www.artima.com/weblogs/viewpost.jsp?thread=214235
+[python_threads_and_the_global_interpreter_lock]: http://jessenoller.com/2009/02/01/python-threads-and-the-global-interpreter-lock/
+[understanding_the_python_gil]: http://www.dabeaz.com/GIL/
+[understanding_the_python_gil_slide]: http://www.dabeaz.com/python/UnderstandingGIL.pdf
+[embarrassingly_parallel]: https://en.wikipedia.org/wiki/Embarrassingly_parallel
+
 ### Chapter 18: Concurrency with asyncio
+
+This chapter introduces `asyncio`, a package that implements concurrency with
+ coroutines driven by an event loop. It's one of the largest and most ambitious
+ libraries ever add to Python. Guido van Rossum developed `asyncio` outside of
+ the Python repository and gave the project a code name of "Tulip". The main
+ discussion group is still called python-tulip. Tulip was renamed to `asyncio`
+ when it was added to the standard library in Python 3.4. It's also compatible
+ with Python 3.3. Because it uses `yield from` expressions extensively,
+ `asyncio` is incompatible with older versions of Python. The Trollius project
+ is a backport of `asyncio` to Python 2.6 and newer, replacing `yield from` with
+ `yield` and clever callables named `From` and `Return`.
 
 ## VI. Metaprogramming
 

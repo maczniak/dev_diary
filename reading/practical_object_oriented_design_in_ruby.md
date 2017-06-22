@@ -228,13 +228,110 @@ Duck types are public interfaces that are not tied to any specific class. Duck
 Class is just one way for an object to acquire a public interface; the public
  interface an object obtains by way of its class may be one of several that it
  contains. Applications may define many public interfaces that are not related
- to one specific class; these interfaces cut across class.
+ to one specific class; these interfaces cut across class.<br>
+Across-class types, duck types, have public interfaces that represent a contract
+ that must be explicit and well-documented.<br>
+Polymorphism in OOP refers to the ability of many different objects to respond
+ to the same message. Senders of the message need not care about the class of
+ the receiver; receivers supply their own specific version of the behavior. A
+ single message thus has many (poly) forms (morphs).<br>
+Several common coding patterns indicate the presence of a hidden duck. You can
+ replace the following with ducks: 1) Case statements that switch on class, 2)
+ `kind_of?` and `is_a?`, 3) `responds_to?`
 
 ## 6. Acquiring Behavior Through Inheritance
 
+Inheritance is, at its core, a mechanism for *automatic message delegation*.<br>
+The term *classical* is a play on the word *class*, not a node to an archaic
+ technique, and it serves to distinguish this superclass/subclass mechanism from
+ other inheritance techniques. JavaScript, for example, has prototypical
+ inheritance and Ruby has *modules*, both of which also provide a way to share
+ code via automatic delegation of messages. Because duck types cut across
+ classes, they do not use classical inheritance to share common behavior. Duck
+ types share code via Ruby modules.<br>
+`nil` is an instance of class `NilClass`; it's an object like any other. Ruby
+ contains two implementations of `nil?`, one in `NilClass`, and the other in
+ `Object`. The implementation in `NilClass` unconditionally returns `true`, and
+ one in `Object`, `false`.<br>
+A decision to put off the creation of the `Bicycle` hierarhcy commits you to
+ writing `MountainBike` and `RoadBike` classes that duplicate a great deal of
+ code. A decision to proceed with the hierarchy accepts the risk that you may
+ not yet have enough information to identify the correct abstraction.<br>
+The general rule for refactoring into a new inheritance hierarchy is to arrange
+ code so that you can promote abstractions rather than demote concretions.
+ ("What will happen *when* I'm wrong?")<br>
+This technique of defining a basic structure in the superclass and sending
+ messages to acquire subclass-specific contributions is known as the *template
+ method* pattern. Where it permits them to influence the algorithm, it sends
+ messages. Subclasses contribute to the algorithm by implementing matching
+ methods. Always document template method requirements by implementing matching
+ methods that raise useful errors.<br>
+It makes sense that subclasses know the specializations they contribute (they
+ are obviously the only classes who *can* know them), but forcing a subclass to
+ know how to interact with its abstract superclass causes many problems. Instead
+ of allowing subclasses to know the algorithm and requiring that they send
+ `super`, superclasses can instead send `hook` messages, ones that exists solely
+ to provide subclasses a place to contribute information by implementing
+ matching methods. This strategy removes knowledge of the algorithm from the
+ subclass and returns control to the superclass.<br>
+Well-designed inheritance hierarchies are easy to extend with new subclasses,
+ even for programmers who know very little about the application. This ease of
+ extension is inheritance's greatest strength.
+
 ## 7. Sharing Role Behavior with Modules
 
+Use of classical inheritance is always optional; every problem that it solves
+ can be solved another way. This chapter explores an alternative that uses the
+ techniques of inheritance to share a *role*. Some problems require sharing
+ behavior among otherwise unrelated objects. This common behavior is orthogonal
+ to class; it's a *role* an object plays.<br>
+The existence of a `Preparer` role suggests that there's also a parallel
+ `Preparable` role (these things often come in pairs). The `Preparable` role is
+ not terribly obvious because `Trip` is its only player but it's important to
+ recognize that it exists.<br>
+Many object-oriented languages provide a way to define a named group of methods
+ that are independent of class and can be mixed in to any object. In Ruby, these
+ mix-ins are called *modules*. Methods can be defined in a module
+ (`module ... end`) and then the module can be added (`include`) to any
+ object.<br>
+This chapter has been careful to maintain a distinction between classical
+ inheritance and sharing code via modules. This *is-a* versus *behaves-like-a*
+ difference definitely matters, each choice has distinct consequences. However,
+ the coding techniques for these two things are very similar and this similarity
+ exists because both techniques rely on automatic message delegation.<br>
+If all attempts to find a suitable method fail, you might expect the search to
+ stop, but many languages make a second attempt to resolve the message. Ruby
+ gives the original receiver a second change by sending it a new message,
+ `method_missing`, and passing `:spares` as an argument.<br>
+It is also possible to add a module's methods to a single object, using Ruby's
+ `extend` keyword. Finally, any object can also have ad hoc methods added
+ directly to its own personal "Singleton class." These ad hoc methods are unique
+ to this specific object.<br>
+Subclass that override a method to raise an exception like "does not implement"
+ are a symptom of this problem. While it is true that expediency pays for all
+ and that it is sometimes most cost effective to arrange code in just this way,
+ you should be reluctant to do so. When subclasses override a method to declare
+ that you *do not do that thing* they come perilously close to declaring that
+ they *are not that thing*.<br>
+Subclass agree to a *contract*; they promise to be substitutable for their
+ superclasses. Where superclass place restrictions on input arguments and return
+ values, subclasses can indulge in a slight bit of freedom without violating
+ their contract. Subclasses may accept input parameters that have broader
+ restrictions and may return results that have narrower restrictions, all while
+ remaining perfectly substitutable for their superclasses. When you honor the
+ contract, you are following the Liskov Substitution Principle (LSP), which is
+ named for its creator, Barbara Liskov, and supplies the "L" in the SOLID design
+ principles. Her principle states: Let *q*(*x*) be a property provable about
+ objects *x* of type *T*. Then *q*(*x*) should be true for objects *y* of type
+ *S* where *S* is a subtype of *T*.<br>
+Hook methods solve the problem of sending `super`, but, unfortunately, only for
+ adjacent levels of the hierarchy. The limitations of hook methods are just one
+ of the many reasons to create shallow hierarchies.
+
 ## 8. Combining Objects with Composition
+
+The line attaches to `Bicycle` with a black diamond; this black diamond
+ indicates *composition*, it means that a `Bicycle` is composed of `Parts`.
 
 ## 9. Designing Cost-Effective Tests
 

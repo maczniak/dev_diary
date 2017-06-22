@@ -101,6 +101,7 @@
 
 * [Developing Web Apps with Haskell and Yesod, 2nd Edition](developing_web_apps_with_haskell_and_yesod_2nd.md), O'Reilly (2015)
 * [HTML5 for Web Designers, Second Edition](html5_for_web_designers_2nd.md), A Book Apart (2016) translation
+* [Identity & Data Security for Web Development](identity_and_data_security_for_web_development.md), O'Reilly (2016)
 * [Learning React](learning_react_aw.md), Addison-Wesley (2016)
 * [Mastering Full-Stack React Web Development](mastering_fullstack_react_web_development.md), Packt Publishing (2017)
 * [ng-book 2](ng_book_2.md), fullstack.io (2017)
