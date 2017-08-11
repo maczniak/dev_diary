@@ -331,7 +331,60 @@ Hook methods solve the problem of sending `super`, but, unfortunately, only for
 ## 8. Combining Objects with Composition
 
 The line attaches to `Bicycle` with a black diamond; this black diamond
- indicates *composition*, it means that a `Bicycle` is composed of `Parts`.
+ indicates *composition*, it means that a `Bicycle` is composed of `Parts`.<br>
+As formally defined *composition* means something a bit more specific; it
+ indicates a *has-a* relationship where the contained object has no life
+ independent of its container. *Aggregation* is exactly like composition except
+ that the contained object has an independent life.<br>
+Classical inheritance is a *code arrangement technique*. Behavior is dispersed
+ among objects and these objects are organized into class relationships such
+ that automatic delegation of messages invokes the correct behavior. Think of it
+ this way: For the cost of arranging objects in a hierarchy, you get message
+ delegation for free. Composition is an alternative that reverses these costs
+ and benefits. In composition, the relationship between objects is not codified
+ in the class hierarchy; instead objects stand alone and as a result must
+ explicitly know about and delegate messages to one another. Composition allows
+ objects to have structural independence, but at the cost of explicit message
+ delegation. If you cannot explicitly defend inheritance as a better solution,
+ use composition.
+
+```ruby
+require 'forwardable'
+class Parts
+  extend Forwardable
+  def_delegators :@parts, :size, :each
+  include Enumerable
+
+  # ...
+```
+
+This is classical inheritance's greatest strength and biggest weakness;
+ subclasses are bound, irrevocably and by design, to the classes above them in
+ the hierarchy. These built-in dependencies amplify the effects of modifications
+ made to superclasses.<br>
+As you write code for a wider audience, your ability to anticipate needs
+ necessarily decreases and the suitability of requiring inheritance as part of
+ the interface goes down. Avoid writing frameworks that require users of your
+ code to subclass your objects in order to gain your behavior. Their
+ application's objects may already be arranged in a hierarchy; inheriting from
+ your framework may not be possible.<br>
+Use Inheritance for *is-a* Relationships / Use Duck Types for *behaves-like-a*
+ (role) Relationships / Use Composition for *has-a* Relationships
 
 ## 9. Designing Cost-Effective Tests
+
+From a practical point of view, changeability is the only design metric that
+ matters; code that's easy to change *is* well-designed. Good design preserves
+ maximum flexibility at minimum cost by putting off decisions at every
+ opportunity, deferring commitments until more specific requirements arrive.
+ When that day comes, *refactoring* is how you morph the current code structure
+ into one that will accommodate the new requirements. New features will be added
+ only after you have successfully refactored the code. An understanding of
+ object-oriented design, good refactoring skills, and the ability to write
+ efficient tests form a three-legged stool upon which changeable code rests.<br>
+Intentionally depending on interfaces allows you to use tests to put off design
+ decisions safely and without penalty. They let you put off design decisions and
+ create abstractions to any useful depth.<br>
+Your goal is to gain all of the benefits of testing for the least cost possible.
+ One simple way to get better value from tests is to wrie fewer of them.
 

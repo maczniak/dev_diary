@@ -44,7 +44,7 @@ when no custom `__str__` is available, Python will call `__repr__` as a fallback
 ### Chapter 2: An Array of Sequences
 
 * container sequences - list, tuple (iterable, immutable), collections.deque
-* flat sequences - str (immutable), bytes (immutable), bytearray, memoryview (without copying, [tutorial][memoryview_tutorial]), array.array (number only)
+* flat sequences - str (immutable), bytes (immutable), bytearray, memoryview (slicing without copying, [tutorial][memoryview_tutorial]), array.array (number only)
 
 list comprehension (listcomp) for `list`, generator expression (genexp) for other sequences<br>
 tuple unpacking or iterable unpacking ([PEP 3132][pep_3132], [PEP 448][pep_448])<br>
@@ -207,7 +207,7 @@ Python 3's function annotations ([PEP 3107][pep_3107]) only store them in
 [fn.py][fn_py] (with `@recur.tco`), [the early history of Bobo][early_history_of_bobo] ([six][six] Python 2 and 3 compatibility library), [Teaching Programming Languages in a Post-Linnaean Age][teaching_programming_languages_in_a_post_linnaean_age], Guido van Rossum [Tail Recursion Elimination][tail_recursion_elimination]
 
 [functional_programming_howto]: https://docs.python.org/3/howto/functional.html
-[origins_of_pythons_functional_features]: http://python-history.blogspot.kr/2009/04/origins-of-pythons-functional-features.html
+[origins_of_pythons_functional_features]: http://python-history.blogspot.com/2009/04/origins-of-pythons-functional-features.html
 [pep_3155]: https://www.python.org/dev/peps/pep-3155/
 [pep_3102]: https://www.python.org/dev/peps/pep-3102/
 [pep_362]: https://www.python.org/dev/peps/pep-0362/
@@ -219,7 +219,7 @@ Python 3's function annotations ([PEP 3107][pep_3107]) only store them in
 [early_history_of_bobo]: http://discuss.fogcreek.com/joelonsoftware/default.asp?cmd=show&ixPost=94006
 [six]: https://pypi.python.org/pypi/six
 [teaching_programming_languages_in_a_post_linnaean_age]: http://cs.brown.edu/~sk/Publications/Papers/Published/sk-teach-pl-post-linnaean/
-[tail_recursion_elimination]: http://neopythonic.blogspot.kr/2009/04/tail-recursion-elimination.html
+[tail_recursion_elimination]: http://neopythonic.blogspot.com/2009/04/tail-recursion-elimination.html
 
 ### Chapter 6: Design Patterns with First-Class Functions
 
@@ -883,7 +883,7 @@ The main features of the `concurrent.futures` package are the
  exception would be raised here (`list(res)`) as the implicit `next()` call
  tried to retrieve the corresponding return value from the iterator.<br>
 Futures are essential components in the internals of `concurrent.futures` and of
- `asyncio`, ut as users of these libraries we sometimes don't see them. As of
+ `asyncio`, but as users of these libraries we sometimes don't see them. As of
  Python 3.4, there are two classes named `Future` in the standard library:
  `concurrent.futures.Future` and `asyncio.Future`. This is similar to the
  `Deferred` class in Twisted, the `Future` class in Tornado, and `Promise`
@@ -968,15 +968,389 @@ This chapter introduces `asyncio`, a package that implements concurrency with
  with Python 3.3. Because it uses `yield from` expressions extensively,
  `asyncio` is incompatible with older versions of Python. The Trollius project
  is a backport of `asyncio` to Python 2.6 and newer, replacing `yield from` with
- `yield` and clever callables named `From` and `Return`.
+ `yield` and clever callables named `From` and `Return`.<br>
+`asyncio` uses a stricter definition of "coroutine". A coroutine suitable for
+ use with the `asyncio` API must use `yield from` and not `yield` in its body.
+ Also, an `asyncio` coroutine should be driven by a caller invoking it through
+ `yield from` or by passing the coroutine to one of the `asyncio` function such
+ as `asyncio.async(...)` and others. Finally, the `@asyncio.coroutine` decorator
+ should be applied to coroutines.<br>
+The use of the `@asyncio.coroutine` decorator is not mandatory, but highly
+ recommended: it makes the coroutines stand out among regular functions, and
+ helps with debugging by issuing a warning when a coroutine is garbage collected
+ without being yielded from. This is not a *priming decorator*.<br>
+A `Task` object can be cancelled safely; `spinner.cancel()` raises
+ `asyncio.CancelledError` at the `yield` line where the coroutine is currently
+ suspended. The coroutine may catch the exception and delay or even refuse to
+ cancel.<br>
+Never use `time.sleep(...)` in `asyncio` coroutines unless you want to block the
+ main thread, therefore freezing the event loop and probably the whole
+ application as well. If a coroutine needs to spend some time doing nothing, it
+ should `yield from asyncio.sleep(DELAY)`.<br>
+A `Task` is like a green thread in libraries that implement cooperative
+ multitasking, such as `gevent`.<br>
+The `asyncio.Future` and the `concurrent.futures.Future` classes have mostly the
+ same interface, but are implemented differently and are not interchangeable.
+ `Task` is a subclass of `Future` designed to wrap a coroutine.<br>
+In `asyncio.Future`, the `.result()` method takes no arguments, so you can't
+ specify a timeout. If you call `.result()` and the future is not done, it
+ raises `asyncio.InvalidStateError`. However, the usual way to get the result of
+ an `asyncio.Future` is to `yield from` it.
+
+```python
+loop = asyncio.get_event_loop()
+result = loop.run_until_complete(supervisor())
+loop.close()
+
+# for running asyncio code from a non-asyncio context
+#  (like on the Python console or in small tests)
+def run_sync(coro_or_future):
+    return asyncio.get_event_loop().run_until_complete(coro_or_future)
+
+try:
+    with (yield from semaphore): # asyncio.Semaphore
+        image = yield from get_flag(base_url, cc)
+    except Exception as exc:
+        raise FetchError(cc) from exc # PEP 3134 Exception Chaining and Embedded Tracebacks
+
+return (yield from http_get(url))
+# The parentheses are required because the Python parser gets confused.
+```
+
+`res = yield from foo()` works if `foo` is a coroutine function (therefore it
+ returns a coroutine object when called) or if `foo` is a plain function that
+ returns a `Future` or `Task` instance (due to `asyncio.async()`). <br>
+As of Python 3.4, `asyncio` only supports TCP and UDP directly. For HTTP or any
+ other protocol, we need third-party packages; `aiohttp` is the one everyone
+ seems to be using for `asyncio` HTTP clients and servers at this time.<br>
+Despite its name, `wait` is not a blocking function. `asyncio.wait(...)`
+ coroutine accepts an iterable of futures or coroutines; `wait` wraps each
+ coroutine in a `Task`. Because it is a coroutine function, calling `wait(...)`
+ returns a coroutine/generator object.<br>
+Behind the scenes Node.js implements a thread pool in C with the `libeio`
+ library, to provide its callback-based file APIs--because as of 2014 there are
+ no stable and portable asynchronous file handling APIs for most OSes.
+`asyncio` does not provide an asynchronous filesystem API at this time--as Node
+ does. If that becomes a bottleneck in your application, you can use the
+ `loop.run_in_executor` function to run `save_flag` in a thread pool.<br>
+The futures returned by `asyncio.as_completed` are not necessarily the same
+ futures we pass into the `as_completed` call. Internally, the `asyncio`
+ machinery replaces the future objects we provide with others that will, in the
+ end, produce the same results.
+ ([Guido's answer][which_other_futures_my_come_out_of_asyncio.as_completed])
+
+```python
+loop = asyncio.get_event_loop()
+server_coro = asyncio.start_server(handle_queries, address, port, loop=loop)
+server = loop.run_until_complete(server_coro)
+host = server.sockets[0].getsockname()
+try:
+    loop.run_forever()
+except KeyboardInterrupt:
+    pass
+server.close()
+loop.run_until_complete(server.wait_closed())
+loop.close()
+```
+
+high-level [Streams API][streams_api] that provides a ready-to-use server so you
+ only need to implemenet a handler function, which can be a plain callback or a
+ coroutine / lower-level
+ [Transports and Protocols API][transports_and_protocols_api], inspired by the
+ transport and protocols abstractions in the Twisted framework.
+
+[Ryan Dahl: Introduction to Node.js][introduction_to_nodejs],
+ [Fan-in and Fan-out: The crucial components of concurrency][fan_in_and_fan_out]
+ ([video][fan_in_and_fan_out_video]),
+ [A Web Crawler With asyncio Coroutines][web_crawler_with_asyncio_coroutines],
+ [Python's asyncio is for composition, not raw performance][python_asyncio_is_for_composition_not_raw_performance],
+ [PyCon US 2013 keynote][pycon_us_2013_keynote],
+ [Guido van Rossum on Tulip][guido_van_rossum_on_tulip],
+ [Tulip: Async I/O for Python 3][tulip_async_io_for_python_3],
+ [A deep dive into PEP-3156 and the new asyncio module][deep_dive_into_pep3156_and_new_asyncio_module]
+ ([video][deep_dive_into_pep3156_and_new_asyncio_module_video]),
+ [Using futures for async GUI programming in Python 3.3][using_futures_for_async_gui_programming_in_python_3_3]
+ ([code][using_futures_for_async_gui_programming_in_python_3_3_code]),
+ [The new Python asyncio module aka "tulip"][new_python_asyncio_module_aka_tulip]
+ (list of relevant links), [aio-libs][aio_libs], [Vaurien][vaurien] (chaos TCP
+ proxy) from [Mozilla Services][mozilla_services],
+ [Callbacks are imperative, promises are functional: Node's biggest missed opportunity][node_biggest_missed_oppertunity],
+ Tornado's [AsyncIOMainLoop][asynciomainloop], [Quamash][quamash],
+ [Autobahn|Python][autobahn_python] and [WebSockets][websockets_library] for
+ WebSockets, [Deconstructing Deferred][deconstructing_deferred],
+ [WWTD (What Would Twisted Do?)][what_would_twisted_do]
+
+[which_other_futures_my_come_out_of_asyncio.as_completed]: https://groups.google.com/forum/#!msg/python-tulip/PdAEtwpaJHs/7fqb-Qj2zJoJ
+[streams_api]: https://docs.python.org/3/library/asyncio-stream.html
+[transports_and_protocols_api]: https://docs.python.org/3/library/asyncio-protocol.html
+[introduction_to_nodejs]: https://www.youtube.com/watch?v=M-sc73Y-zQA
+[fan_in_and_fan_out]: https://speakerdeck.com/pycon2014/fan-in-and-fan-out-the-crucial-components-of-concurrency-by-brett-slatkin
+[fan_in_and_fan_out_video]: https://www.youtube.com/watch?v=CWmq-jtkemY
+[web_crawler_with_asyncio_coroutines]: http://aosabook.org/en/500L/a-web-crawler-with-asyncio-coroutines.html
+[python_asyncio_is_for_composition_not_raw_performance]: http://www.onebigfluke.com/2015/02/asyncio-is-for-composition.html
+[pycon_us_2013_keynote]: http://pyvideo.org/pycon-us-2013/keynote-1.html
+[guido_van_rossum_on_tulip]: https://www.youtube.com/watch?v=aurOB4qYuFM
+[tulip_async_io_for_python_3]: https://www.youtube.com/watch?v=1coLC-MUCJc
+[deep_dive_into_pep3156_and_new_asyncio_module]: https://www.slideshare.net/saghul/asyncio
+[deep_dive_into_pep3156_and_new_asyncio_module_video]: https://www.youtube.com/watch?v=MS1L2RGKYyY
+[using_futures_for_async_gui_programming_in_python_3_3]: http://pyvideo.org/pycon-us-2013/using-futures-for-async-gui-programming-in-python.html
+[using_futures_for_async_gui_programming_in_python_3_3_code]: https://github.com/fluentpython/asyncio-tkinter
+[new_python_asyncio_module_aka_tulip]: http://haypo-notes.readthedocs.io/asyncio.html
+[aio_libs]: https://github.com/aio-libs
+[vaurien]: http://vaurien.readthedocs.io/
+[mozilla_services]: https://mozilla-services.github.io/
+[node_biggest_missed_oppertunity]: https://blog.jcoglan.com/2013/03/30/callbacks-are-imperative-promises-are-functional-nodes-biggest-missed-opportunity/
+[asynciomainloop]: http://tornado.readthedocs.io/en/latest/asyncio.html
+[quamash]: https://pypi.python.org/pypi/Quamash/
+[autobahn_python]: https://github.com/crossbario/autobahn-python
+[websockets_library]: https://websockets.readthedocs.io/en/stable/
+[deconstructing_deferred]: https://groups.google.com/forum/#!msg/python-tulip/ut4vTG-08k8/PWZzUXX9HYIJ
+[what_would_twisted_do]: https://groups.google.com/forum/#!msg/python-tulip/pPMwtsCvUcw/eIoX_n8FSPwJ
 
 ## VI. Metaprogramming
 
 ### Chapter 19: Dynamic Attributes and Properties
 
+The special method that actually constructs an instance is `__new__`: it's a
+ class method (but gets special treatment, so the `@classmethod` decorator is
+ not used), and it must return an instance. That instance will in turn be passed
+ as the first argument `self` of `__init__`. The real constructor is
+ `__new__`--which we rarely need to code because the implementation inherited
+ from `object` suffices. The `__new__` method can also return an instance of a
+ different class, and when that happens, the interpreter does not call
+ `__init__`.<br>
+`@property`, `@weight.setter` and `@weight.deleter`,
+ `property(fget=None, fset=None, fdel=None, doc=None)`. Although often used as a
+ decorator, the `property` built-in is actually a class.<br>
+Properties override instance attributes, and instance attributes override class
+ atrributes.
+The property factory would be placed in a utility module to be used over and
+ over again. Eventually that simple factory could be refactored into a more
+ extensible descriptor class, with specialized subclasses performing different
+ validations.<br>
+`dir([object])` lists most attributes of the object. The `__dict__` attribute
+ itself is not listed by `dir`, but the `__dict__` keys are listed. Several
+ special attributes of classes, such as `__mro__`, `__bases__`, and `__name__`
+ are not listed by `dir` either. `vars([object])` returns the `__dict__` of
+ `object`; `vars` can't deal with instances of classes that define `__slots__`
+ and don't have a `__dict__` (contrast with `dir`, which handles such
+ instances). Without an argument, `vars()` does the same as `locals()`.<br>
+Attribute access using either dot notation or the built-in functions `getattr`,
+ `hasattr`, and `setattr` trigger the appropriate special methods
+ (`__delattr__`, `__dir__`, `__getattr__`, `__getattribute__` and
+ `__setattr__`). Reading and writing attributes directly in the instance
+ `__dict__` does not trigger these special methods--and that's the usual way to
+ bypass them if needed. Assume that the special methods will be retrieved on the
+ class itself, even when the target of the action is an instance. For this
+ reason, special methods are not shadowed by instance attributes with the same
+ name. In practice, because they are unconditionally called and affect
+ practically every attribute access, the `__getattribute__` and `__setattr__`
+ special methods are harder to use correctly than `__getattr__`--which only
+ handle nonexisting attribute names. Using properties or descriptors is less
+ error prone than defining these special methods.
+
+```python
+with urlopen(URL) as remote, open(JSON, 'wb') as local: # since Python 2.7 and 3.1
+    local.write(remote.read())
+
+class Record: # the "bunch" idiom
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
+self.__class__.fetch # if a event record had a key named 'fetch'
+
+def test_missing_db_exception():
+    with pytest.raises(schedule.MissingDatabaseError):
+        schedule.DbRecord.fetch('venue.1585')
+```
+
+[Class-level read-only properties in Python][class_level_read_only_properties_in_python],
+ [Uniform Access Principle][uniform_access_principle],
+ [Java's *new* Considered Harmful][java_new_considered_harmful]
+
+[class_level_read_only_properties_in_python]: https://stackoverflow.com/questions/1735434/class-level-read-only-properties-in-python
+[uniform_access_principle]: http://wiki.c2.com/?UniformAccessPrinciple
+[java_new_considered_harmful]: http://www.drdobbs.com/javas-new-considered-harmful/184405016
+
 ### Chapter 20: Attribute Descriptors
 
+Descriptors are a way of reusing the same access logic in multiple attributes.
+ For example, field types in ORMs such as the Django ORM and SQL Alchemy are
+ descriptors, managing the flow of data from the fields in a database record to
+ Python object attributes and vice versa. A descriptor is a class that
+ implements a protocol consisting of the `__get__`, `__set__`, and `__delete__`
+ methods. The `property` class implements the full descriptor protocol. Besides
+ properties, other Python features that leverage descriptors are methods and the
+ `classmethod` and `staticmethod` decorators. Understanding descriptors is key
+ to Python mastery.<br>
+If a descriptor does not implement `__set__`, then it's a nonoverriding
+ descriptor. Setting an instance attribute with the same name will shadow the
+ descriptor, rendering it ineffective for handling that attribute in that
+ specific instance. Methods are implemented as nonoverriding descriptors.
+ Overriding descriptors are also called data descriptors or enforced
+ descriptors. Nonoverriding descriptors are also known as nondata descriptors or
+ shadowable descriptors.<br>
+Regardless of whether a descriptor is overriding or not, it can be overwritten
+ by assignment to the class. This is a monkey-patching technique. Although the
+ reading of a class attribute can be controlled by a descriptor with `__get__`
+ attached to the managed class, the writing of a class attribute cannot be
+ handled by a descriptor with `__set__` attached to the same class.<br>
+As usual with descriptors, the `__get__` of a function returns a reference to
+ itself when the access happens through the managed class. But when the access
+ goes through an instance, the `__get__` of the function returns a bound method
+ object. The bound method object has a `__self__` attribute holding a reference
+ to the instance on which the method was called. The `__func__` attribute of the
+ bound method is a reference to the original function attached to the managed
+ class. The bound method object also has a `__call__` method, which handles the
+ actual invocation. This method calls the original function referenced in
+ `__func__`, passing the `__self__` attribute of the method as the first
+ argument. That's how the implicit binding of the conventional `self` argument
+ works.<br>
+Descriptor Usage Tips:
+* Use property to Keep It Simple
+* Read-only descriptors require `__set__`
+* Validation descriptors can work with `__set__` only
+* Caching can be done efficiently with `__get__` only. The namesake instance
+  attribute will shadow the descriptor, so subsequent access to that attribute
+  will fetch it directly from the instance `__dict__` and not trigger the
+  descriptor `__get__` anymore.
+* Nonspecial methods can be shadowed by instance attributes. However, this issue
+  does not interfere with special methods. The interpreter only looks for
+  special methods in the class itself, in other words, `repr(x)` is executed as
+  `x.__class__.__repr__(x)`.
+
+```python
+class Quantity:
+    def __init__(self, storage_name):
+        self.storage_name = storage_name
+    def __set__(self, instance, value):
+        if value > 0:
+            instance.__dict__[self.storage_name] = value
+        else:
+            raise ValueError('value must be > 0')
+```
+
+[Descriptor HowTo Guide][descriptor_howto_guide],
+ [Python's Object Model][python_object_model]
+ ([slide][python_object_model_slide]),
+ [The Rise of Worse is Better][rise_of_worse_is_better],
+ [Python Warts][python_warts],
+ [Adding Support for User-defined Classes][adding_support_for_user_defined_classes]
+
+[descriptor_howto_guide]: https://docs.python.org/3/howto/descriptor.html
+[python_object_model]: https://www.youtube.com/watch?v=VOzvpHoYQoo
+[python_object_model_slide]: http://www.aleax.it/Python/nylug05_om.pdf
+[rise_of_worse_is_better]: http://dreamsongs.com/RiseOfWorseIsBetter.html
+[python_warts]: http://web.archive.org/web/20031002184114/www.amk.ca/python/writing/warts.html
+[adding_support_for_user_defined_classes]: http://python-history.blogspot.com/2009/02/adding-support-for-user-defined-classes.html
+
 ### Chapter 21: Class Metaprogramming
+
+Classes are first-class objects in Python, so a function can be used to create a
+ new class at any time, without using the `class` keyword. Metaclasses (class
+ factory class) are powerful, but hard to get right. Class decorators (since
+ Python 2.6) solve many of the same problems more simply.<br>
+We usually think of `type` as a function, because we use it like one, e.g.,
+ `type(my_object)` to get the class of the object--same as
+ `my_object.__class__`. However, `type` is a class. It behaves like a class that
+ creates a new class when invoked with three arguments:
+ `type(name, bases, dict)`.<br>
+A class decorator is very similar to a function decorator: it's a function that
+ gets a class object and returns the same class or a modified one. A significant
+ drawback of class decorators is that they act only on the class where they are
+ directly applied. This means subclasses of the decorated class may or may not
+ inherit the changes made by the decorator, depending on what those changes
+ are.<br>
+In particular, the `import` statement is not merely a declaration but it
+ actually runs all te top-level code of the imported module when it's imported
+ for the first time in the process--further imports of the same module will use
+ a cache, and only name binding occurs then. That top-level code may do
+ anything, including actions typical of "runtime", such as connecting to a
+ database. The interpreter compiles the function body (if it's the first time
+ that module is imported), and binds the function object to its global name, but
+ it does not execute the body of the function, obviously. But the interpreter
+ invokes the decorator function at import time. For classes, at import time, the
+ interpreter executes the body of every class, even the body of classes nested
+ in other classes. Execution of a class body means that the attributes and
+ methods of the class are defined, and then the class object itself is
+ built.<br>
+By default, Python classes are instances of `type`. In other words, `type` is
+ the metaclass for most built-in and user-defined classes. `object` is an
+ instance of `type`, and `type` is a subclass of `object`. `type` is an instance
+ of itself. Only metaclasses are subclasses of `type`, so they act as class
+ factories. In particular, a metaclass can customize its instances by
+ implementing `__init__`.<br>
+(`class ClassFive(metaclass=MetaAleph)`) The Python interpreter evaluates the
+ body of `ClassFive` but then, instead of calling `type` to build the actual
+ class body, it calls `MetaAleph`. `MetaAleph` has the
+ `__init__(cls, name, bases, dic)` method to initialize its instances.<br>
+A metaclass can customize a hierarchy of classes--in contrast with a class
+ decorator, which affects a single class and may have no impact on its
+ descendants.<br>
+However, by default, that mapping is a `dict`, which means the order of the
+ attributes as they appear in the class body is lost by the time our metaclass
+ or class decorator can look at them. The solution to this problem is the
+ `__prepare__` special method, introduced in Python 3. This special method is
+ relevant only in metaclasses, and it must be a class method. it must return a
+ mapping, which will be received as the last argument by `__new__` and then
+ `__init__` when the metaclass builds a new class.<br>
+metaclass usage - attribute validation, applying decorators to many methods at
+ once, object serialization or data conversion, object-relational mapping,
+ object-based persistency, dynamic translation of class structures from other
+ languages<br>
+`cls.__bases__`, `cls.__qualname` (since 3.3), `cls.__subclasses__()` (returns
+ the list of subclasses that currently exist in memory), `cls.mro()` (a
+ metaclass can override this method)
+
+[Acrimony in c.l.p.][acrimony_in_clp],
+ [collections.nameduple source code][collections_nameduple_src] and `._source`
+ attribute, [`types` module][types_module],
+ [Class Decorators: Radically Simple][class_decorators_radically_simple],
+ [Meta-classes Made Easy: Eliminating self with Metaclasses][metaclasses_made_easy],
+ [Unifying types and classes in Python 2.2][unifying_types_and_classes_in_python_2_2],
+ *Putting Metaclasses to Work: a New Dimension in Object-Oriented Programming*
+ (Addison-Wesley, 1998),
+ [PEP 487 -- Simpler customisation of class creation][pep_487] (introduces
+ `__init_subclass__`), [MacroPy][macropy],
+ *[Simply Scheme: Introducing Computer Science][simply_scheme]* (MIT, 1999),
+ *Machine Beauty: Elegance And The Heart Of Technology* (Basic Books, 1998)
+
+[acrimony_in_clp]: https://mail.python.org/pipermail/python-list/2002-December/134521.html
+[collections_nameduple_src]: https://hg.python.org/cpython/file/3.4/Lib/collections/__init__.py
+[types_module]: https://docs.python.org/3/library/types.html
+[class_decorators_radically_simple]: https://www.youtube.com/watch?v=cAGliEJV9_o
+[metaclasses_made_easy]: http://www.voidspace.org.uk/python/articles/metaclasses.shtml
+[unifying_types_and_classes_in_python_2_2]: https://www.python.org/download/releases/2.2.3/descrintro/
+[pep_487]: https://www.python.org/dev/peps/pep-0487/
+[macropy]: https://github.com/lihaoyi/macropy
+[simply_scheme]: https://people.eecs.berkeley.edu/~bh/ss-toc2.html
+
+## Afterword
+
+[A Python Æsthetic: Beauty and Why I Python][python_aesthetic_beauty_and_why_i_python],
+ [Transforming Code into Beautiful, Idiomatic Python][transforming_code_into_beautiful_idiomatic_python],
+ [Evolution of Style Guides][evolution_of_style_guides], [flake8][flake8],
+ [Google Python Style Guide][google_python_style_guide],
+ [Pocoo Style Guide][pocoo_style_guide],
+ *[The Hitchhiker's Guide to Python][hitchhiker_guide_to_python]* (O'Reilly,
+ 2016),
+ [Code Like a Pythonista: Idiomatic Python][code_like_a_pythonista_idiomatic_python],
+ [What is Pythonic?][what_is_pythonic] ([thread][what_is_pythonic_thread]),
+ [PEP 3099 -- Things that will Not Change in Python 3000][pep_3099],
+ [Python Essays][python_essays], Zen of Python (`import this`)
+
+[python_aesthetic_beauty_and_why_i_python]: https://www.youtube.com/watch?v=x-kB2o8sd5c
+[transforming_code_into_beautiful_idiomatic_python]: https://www.youtube.com/watch?v=OSGv2VnC0go
+[evolution_of_style_guides]: https://mail.python.org/pipermail/python-ideas/2015-March/032557.html
+[flake8]: https://pypi.python.org/pypi/flake8
+[google_python_style_guide]: https://google.github.io/styleguide/pyguide.html
+[pocoo_style_guide]: http://www.pocoo.org/internal/styleguide/
+[hitchhiker_guide_to_python]: http://docs.python-guide.org/en/latest/
+[code_like_a_pythonista_idiomatic_python]: http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html
+[what_is_pythonic]: https://blog.startifact.com/posts/older/what-is-pythonic.html
+[what_is_pythonic_thread]: https://mail.python.org/pipermail/tutor/2003-October/025930.html
+[pep_3099]: https://www.python.org/dev/peps/pep-3099/
+[python_essays]: https://www.python.org/doc/essays/
 
 ## Appendix: Support Scripts
 

@@ -162,7 +162,6 @@ OAuth 2.0 (for more simplicity and to accommodate web applications, native
 1. Service Provider: grant Access Token
 1. Consumer: use Access Token to access protected resources
 
-
 [OpenID Connect][openid_connect] is a standard issued by the OpenID Foundation
  in February 2014 and resembles an extra layer on the top of the OAuth 2.0 core
  that handles user authentication in a standardized REST-like manner.<br>

@@ -146,11 +146,58 @@ which may be rewritten in terms of momenta as
 ## 10. Rotational Dynamics II
 
 The parallel axis theorem: *I* = *I*<sub>*CM*</sub> + *Md*<sup>2</sup><br>
-*K* = *K*<sub>*CM*</sub> + *K*<sub>*rot*</sub>
+Consider for example a coin that is standing on its rim on some surface. It has
+ just one point of contact with the surface. If we demand that there be no
+ slipping, the point of contact cannot move relative to the surface as it rolls.
+ So the coin will simply rotate around this point (at this instant) nd the
+ relevant *I* will be 3*MR*<sup>2</sup>/2. At every instant, the part of the
+ tire that touches the ground has zero instantneous velocity.<br>
+*K* = *K*<sub>*CM*</sub> + *K*<sub>*rot*</sub><br>
+Where does the extra energy come from? It comes from her muscles that apply the
+ centripetal force as she pulls in her arms. The centripetal force is always
+ there to keep her extended arms moving in a circle, but it does work only when
+ her arms move radially, for that is when *dW* = **F**⋅*d***r** ≠ 0.
 
 ## 11. Rotational Dynamics III
 
+(static equilibrium) Σ*F*<sub>*x*</sub> = Σ*F*<sub>*y*</sub> = Σ*τ* = 0<br>
+***τ*** = **r** × **F** (right-hand rule)<br>
+This trick of using two vectors to define a unique direction perpendicular to
+ the plane they define works only in *d* = 3. In *d* = 4, there will be *two*
+ independent directions perpendicular to the plane defined by any two
+ vectors.<br>
+*C*<sub>*x*</sub> = *A*<sub>*y*</sub>*B*<sub>*z*</sub> -
+ *A*<sub>*z*</sub>*B*<sub>*y*</sub> (← *AB*sin(*γ*<sub>*B*</sub> -
+ *γ*<sub>*A*</sub>)<br>
+*C*<sub>*y*</sub> = *A*<sub>*z*</sub>*B*<sub>*x*</sub> -
+ *A*<sub>*x*</sub>*B*<sub>*z*</sub><br>
+*C*<sub>*z*</sub> = *A*<sub>*x*</sub>*B*<sub>*y*</sub> -
+ *A*<sub>*y*</sub>*B*<sub>*x*</sub><br>
+First we will show that if the total force **F**<sub>*T*</sub> on a body
+ vanishes, and the total torque **τ**<sub>*T*</sub> is zero about one point, it
+ will be zero about any other.<br>
+**L** = **r** × **p**
+
 ## 12. Special Relativity I: The Lorentz Transformation
+
+The theory of relativity is actually a lot older, going back to Galileo and
+ Newton. According to the relativity principle, two observers in uniform
+ relative motion will deduce the same laws of physics. That view of relativity
+ has remained unchanged even after Einstein. In the nineteenth century, it began
+ to look as if the laws of electromagnetism and light did not respect the
+ relativity principle. Einstein then rescued the principle, but he threw many
+ cherished Newtonian ideas of space and time under the bus in the bargain. His
+ 1905 work is referred to as the special theory of relativity, in contrast to
+ his general theory, which came out in 1915. It was a theory of gravitation, and
+ it is universally considered one of the greatest feats of human imagination and
+ invention. Time, which was once viewed as an absolute parameter, will turn out
+ to be an additional dimension, in a sense to be made precise later.<br>
+The claim of relativity is that you just will now know if you are moving or not.
+ However, if the train picks up speed or slows down, you will know right away.
+ Recall that if Newton's laws worked for you, you are called an inertial
+ observer, and your frame of reference is called an inertial frame. *F* = *ma*
+ won't be true in an accelerating train. That's why an accelerating train is a
+ non-inertial frame.
 
 ## 13. Special Relativity II: Some Consequences
 

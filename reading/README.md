@@ -13,12 +13,17 @@
 
 ## Data Science
 
+* [파이썬과 케라스로 배우는 강화학습](reinforcement_learning_with_python_and_keras.md), 위키북스 (2017)
+* [Data Science in Transportation](data_science_in_transportation.md), O'Reilly (2017)
 * [Graphing Data with R](graphing_data_with_r.md), O'Reilly (2016)
+* [The Visual Display of Quantitative Information, Second Edition](visual_display_of_quantitative_information_2nd.md), Graphics Press LLC (2001)
+* [ゼロから作るDeep Learning](deep_learning_from_scratch.md), オライリージャパン (2016) translation
 
 ## Database
 
 * [Mastering RethinkDB](mastering_rethinkdb.md), Packt Publishing (2016)
 * [Understanding MySQL Internals](understanding_mysql_internals.md), O'Reilly (2007)
+* [NoSQLデータベースファーストガイド](nosql_database_first_guide.md), 秀和システム (2011) translation
 
 ## Essay and History
 
@@ -31,6 +36,7 @@
 * [Game Programming Patterns](game_programming_patterns.md), Genever Benning (2014)
 * [Making Games for the Atari 2600](making_games_for_the_atari_2600.md), CreateSpace (2016)
 * [Making Great Games](making_great_games.md), Focal Press (2011) translation
+* [Procedural Content Generation in Games](procedural_content_generation_in_games.md), Springer (2016)
 
 ## Mobile
 
@@ -77,7 +83,7 @@
 * [Redis Essentials](redis_essentials.md), Packt Publishing (2015)
 * [SCALA for the Impatient](scala_for_the_impatient.md), Addison-Wesley (2012) translation
 * [Type-Driven Development with Idris](type_driven_development_with_idris.md), Manning (2017)
-* [ゼロから作るDeep Learning](deep_learning_from_scratch.md), オライリージャパン (2016) translation
+* [You Don't Know JS: Async & Performance](you_dont_know_js_async_and_performance.md), O'Reilly (2015)
 * [はじめてのSpring Boot](first_spring_boot.md), 工学社 (2014) translation
 * [正規表現 技術入門](introduction_to_regular_expression.md), 技術評論社 (2015) translation
 
@@ -105,6 +111,7 @@
 * [Learning React](learning_react_aw.md), Addison-Wesley (2016)
 * [Mastering Full-Stack React Web Development](mastering_fullstack_react_web_development.md), Packt Publishing (2017)
 * [ng-book 2](ng_book_2.md), fullstack.io (2017)
+* [Node.js 6.x Blueprints](nodejs_6_blueprints.md), Packt Publishing (2016)
 * [Two Scoops of Django: Best Practices for Django 1.8](two_scoops_of_django_1.8.md), Two Scoops Press (2015) translation
 * [Web Development with Node and Express](web_development_with_node_and_express.md), O'Reilly (2014) translation
 * [파이썬 웹 프로그래밍: Django(장고)로 배우는 쉽고 빠른 웹 개발](python_web_programming_django.md), 한빛미디어 (2015)
