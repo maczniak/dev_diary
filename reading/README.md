@@ -1,5 +1,6 @@
 ## Computer Science
 
+* [개미 수열을 푸는 10가지 방법](look_and_say_sequence_in_10_ways.md), Leanpub (2017)
 * [알고리즘 문제 해결 전략](https://github.com/deliberate-practice/algo), 인사이트 (2012)
 * [A Beginner's Guide to Mathematical Logic](beginners_guide_to_mathematical_logic.md), Dover (2014)
 * [Certified Programming with Dependent Types](certified_programming_with_dependent_types.md), The MIT Press (2013)
@@ -7,15 +8,19 @@
 * [From Mathematics to Generic Programming](from_mathematics_to_generic_programming.md), Addison-Wesley (2015)
 * [Implementing Functional Languages](implementing_functional_languages.md), Prentice Hall (1992)
 * [Logic for Computer Science, Second Edition](logic_for_computer_science_2nd.md), Dover (2015)
+* [Purely Functional Data Structures](purely_functional_data_structures.md), Cambridge University Press (1998)
 * [Practical Foundations for Programming Languages, Second Edition](practical_foundations_for_programming_languages_2nd.md), Cambridge University Press (2016)
 * [Software Foundations](software_foundations.md) (2016)
 * [Types and Programming Languages](types_and_programming_languages.md), The MIT Press (2002)
 
-## Data Science
+## Data Science and Machine Learning
 
 * [파이썬과 케라스로 배우는 강화학습](reinforcement_learning_with_python_and_keras.md), 위키북스 (2017)
 * [Data Science in Transportation](data_science_in_transportation.md), O'Reilly (2017)
+* [Fundamentals of Deep Learning](fundamentals_of_deep_learning.md), O'Reilly (2017)
 * [Graphing Data with R](graphing_data_with_r.md), O'Reilly (2016)
+* [Learning TensorFlow](learning_tensorflow.md), O'Reilly (2017)
+* [Reinforcement Learning: An Introduction, Second edition](reinforcement_learning_an_introduction_2nd.md), The MIT Press (not yet)
 * [The Visual Display of Quantitative Information, Second Edition](visual_display_of_quantitative_information_2nd.md), Graphics Press LLC (2001)
 * [ゼロから作るDeep Learning](deep_learning_from_scratch.md), オライリージャパン (2016) translation
 
@@ -55,7 +60,6 @@
 
 ## Programming
 
-* [개미 수열을 푸는 10가지 방법](look_and_say_sequence_in_10_ways.md), Leanpub (2017)
 * [객체지향의 사실과 오해: 역할, 책임, 협력 관점에서 본 객체지향](essence_of_object_orientation.md), 위키북스 (2015)
 * [진짜 쉽고 쓸모 있는 언어 파이썬](really_easy_and_useful_language_python.md), 성안당 (2016)
 * [폴리글랏 프로그래밍](polyglot_programming.md), 한빛미디어 (2014)
@@ -77,7 +81,6 @@
 * [Pearls of Functional Algorithm Design](pearls_of_functional_algorithm_design.md), Cambridge University Press (2010)
 * [Practical Object-Oriented Design in Ruby](practical_object_oriented_design_in_ruby.md), Addison-Wesley (2013)
 * [Pro Spring Boot](pro_spring_boot.md), Apress (2016)
-* [Purely Functional Data Structures](purely_functional_data_structures.md), Cambridge University Press (1998)
 * [Real World Haskell](real_world_haskell.md), O'Reilly (2008)
 * [Real World OCaml](real_world_ocaml.md), O'Reilly (2013)
 * [Redis Essentials](redis_essentials.md), Packt Publishing (2015)
@@ -85,6 +88,7 @@
 * [Type-Driven Development with Idris](type_driven_development_with_idris.md), Manning (2017)
 * [You Don't Know JS: Async & Performance](you_dont_know_js_async_and_performance.md), O'Reilly (2015)
 * [はじめてのSpring Boot](first_spring_boot.md), 工学社 (2014) translation
+* [みんなのGo言語](go_for_everyone.md), 技術評論社 (2016) translation
 * [正規表現 技術入門](introduction_to_regular_expression.md), 技術評論社 (2015) translation
 
 ## Simulation and Modeling
@@ -98,9 +102,11 @@
 * [Building Maintainable Software: Ten Guidelines for Future-Proof Code](https://github.com/deliberate-practice/agile), O'Reilly (2016)
 * [Peopleware: Productive Projects and Teams](https://github.com/deliberate-practice/agile), Addison-Wesley (3rd ed, 2013) translation
 * [Smart and Gets Things Done](smart_and_gets_things_done.md), Apress (2007) translation
+* [Team Geek](team_geek.md), O'Reilly (2012) translation
 
 ## System Administration
 
+* [DevOps와 SE를 위한 리눅스 커널 이야기](linux_kernel_story_for_devops_and_se.md), 인사이트 (2017)
 * [Troubleshooting OpenVPN](troubleshooting_openvpn.md), Packt Publishing (2017)
 
 ## Web

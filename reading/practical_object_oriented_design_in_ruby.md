@@ -386,5 +386,64 @@ Intentionally depending on interfaces allows you to use tests to put off design
  decisions safely and without penalty. They let you put off design decisions and
  create abstractions to any useful depth.<br>
 Your goal is to gain all of the benefits of testing for the least cost possible.
- One simple way to get better value from tests is to wrie fewer of them.
+ One simple way to get better value from tests is to write fewer of them. The
+ most stable thing about any object is its public interface; it logically
+ follows that the tests you write should be for messages that are defined in
+ public interfaces.
+
+Some outgoing messages have no side effects and thus matter only to their
+ senders. Outgoing messages like this are known as *queries* and they need not
+ be tested by the sending object. However, many outgoing messages *do* have side
+ effects upon which your application depends. These messages are *commands* and
+ it is the responsibility of the sending object to prove that they are properly
+ sent. Proving that a message gets sent is a test of behavior, not state, and
+ involves assertions about the number of times, and with what arguments, the
+ message is sent. / In the same way that tests should ignore messages sent to
+ `self`, they also should ignore outgoing query messages.<br>
+Well-intentioned novices often write expensive, duplicative tests around messy,
+ tightly coupled code. It is an unfortunate truth that the most complex code is
+ usually written by the least qualified person. Your overall goal is to create
+ well-designed applications that have acceptable test coverage. The best way to
+ reach this goal varies according to the strengths and experience of the
+ programmer.<br>
+As of this writing, the mainstream frameworks are MiniTest, from Ryan Davis and
+ seattle.rb and bundled with Ruby as of version 1.9, and RSpec, from David
+ Chelimsky and the RSpec team.
+
+Both style create code by writing tests first. BDD takes an outside-in approach,
+ creating objects at the boundary of an application and working its way inward,
+ mocking as necessary to supply as-yet-unwritten objects. TDD takes an
+ inside-out approach, usually starting with tests of domain objects and then
+ reusing these newly created domain objects in the tests of adjacent layers of
+ code.<br>
+When testing, it's useful to think of your application's objects as divided into
+ two major categories. The first category contains the object that you're
+ testing, referred to from now on as the *object under test*. The second
+ category contains everything else.
+
+When tightly coupled objects are tested, a test of one object runs code in many
+ others.<br>
+When the code in your test uses the same collaborating objects as the code in
+ your application, your tests always brak when they should. The value of this
+ cannot be underestimated. This choice between injecting real or fake objects
+ has far-reaching consequences. Injecting the same objects at test time as are
+ used at runtime ensures that tests break correctly but may lead to long running
+ tests. Alternatively, injecting doubles can speed tests but leave them
+ vulnerable to constructing a fantasy world where tests work but the application
+ fails.
+
+Mocks are tests of behavior, as opposed to tests of state. Instead of making
+ assertions about what a message returns, mocks define an expectation that a
+ message will get sent. Mocks are meant to prove messages get sent, they return
+ results only when necessary to get tests to run.<br>
+Because several different classes act as `Preparers`, the role's test should be
+ written once and shared by every player (via Ruby modules). From the point of
+ view of the object under test, every other object is a role and dealing with
+ objects as if they are representatives of the roles they play loosens coupling
+ and increases flexibility, both in your application and in your tests. The
+ easiest way to prove that every object in the hierarchy obeys Liskov is to
+ write a shared test for the common contract and include this test in every
+ object.<br>
+Be especially careful when testing subclass specializations to prevent knowledge
+ of the superclass from leaking down into the subclass's test.
 

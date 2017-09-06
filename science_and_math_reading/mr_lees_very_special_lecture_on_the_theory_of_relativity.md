@@ -2,9 +2,13 @@
 
 이 책은 2009년 1월부터 같은 해 12월까지 독서모임인 [백북스][hundredbooks]에서
  지은이가 진행한 상대성이론 강의를 담은 것으로 당시 쓰였던 강의노트와 강의에
- 참여했던 사람들의 기억과 기록을 토대로 재구성한 것이다.
+ 참여했던 사람들의 기억과 기록을 토대로 재구성한 것이다.<br>
+K-MOOC 일반인을 위한 일반상대성이론 [I][kmooc_1], [II][kmooc_2]
 
+[homepage]: http://blog.naver.com/dongasia1998/220390745955
 [hundredbooks]: http://www.100books.kr/
+[kmooc_1]: http://www.kmooc.kr/courses/course-v1:KoreaUnivK+ku_phy_001+2017_A04/about
+[kmooc_2]: http://www.kmooc.kr/courses/course-v1:KoreaUnivK+ku_phy_001+2017_A05/about
 
 ## 제1회 만남
 

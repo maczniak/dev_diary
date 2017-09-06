@@ -73,8 +73,8 @@ Linear dynamical systems can show only exponential growth/decay, periodic
  behaviors that are represented by polynomials (or products of polynomials and
  exponentials) of time. This occurs when their coefficient matrices are
  *non-diagonalizable*.<br>
-*x*<sub>*t*<sub> = *x*<sub>*t*-1<sub> + *rx*<sub>*t*-1<sub>(1 -
- *x*<sub>*t*-1<sub>/*K*) is called the *logistic growth* model in mathematical
+*x*<sub>*t*</sub> = *x*<sub>*t*-1</sub> + *rx*<sub>*t*-1</sub>(1 -
+ *x*<sub>*t*-1</sub>/*K*) is called the *logistic growth* model in mathematical
  biology and several other disciplines.<br>
 *causal loop diagram* in *System Dynamics*<br>
 The model we have created above is actually a variation of the *Lotka-Volterra
