@@ -2,7 +2,7 @@
 
 (bookdraft2017june19.pdf)
 
-[hompage]: http://incompleteideas.net/sutton/book/the-book-2nd.html
+[homepage]: http://incompleteideas.net/sutton/book/the-book-2nd.html
 
 ### 1. The Reinforcement Learning Problem
 
@@ -58,7 +58,12 @@ For example, methods such as genetic algorithms, genetic programming, simulated
  for interacting with its environment, and select those that are able to obtain
  the most reward. We call these *evolutionary* methods because their operation
  is analogous to the way biological evolution produces organisms with skilled
- behavior even when they do not learn during their individual lifetimes.<br>
+ behavior even when they do not learn during their individual lifetimes. If the
+ space of policies is sufficiently small, or can be structured so that good
+ policies are common or easy to find--or if a lot of time is available for the
+ search--then evolutionary methods can be effective. In addition, evolutionary
+ methods have advantages on problems in which the learning agent cannot
+ accurately sense the state of its environment.<br>
 These methods search in spaces of policies defined by a collection of numerical
  parameters. They estimate the directions the parameters should be adjusted in
  order to most rapidly improve a policy's performance. Unlike evolutionary
@@ -105,7 +110,7 @@ Although sequences of step-size parameters that meet these convergence
  argmax<sub>*a*</sub>[*Q*<sub>*t*</sub>(*a*) +
  *c*√(log*t*/*N*<sub>*t*</sub>(*a*))] (measure of the uncertainty or variance in
  the estimate of *a*'s value, the confidence level)<br>
-UCB will often perform well, but is more difficult than *ε*-greedy ti extend
+UCB will often perform well, but is more difficult than *ε*-greedy to extend
  beyond bandits to the more general RL settings. One difficulty is in dealing
  with nonstationary problems. Another difficulty is dealing with large state
  spaces, particularly function approximation. In these more advanced setting
@@ -121,7 +126,7 @@ However, in a general RL task there is more than one situation, and the goal is
  both trial-and-error learning in the form of *search* for the best actions and
  *association* of these actions with the situations in which they are best.
  Associative search tasks are intermediate between the *k*-armed bandit problem
- and the full RL problem (learning a policy, but ony the immediate reward). We
+ and the full RL problem (learning a policy, but only the immediate reward). We
  prefer to reserve associative RL as a synonym for the full RL problem.<br>
 *Bayesian* methods assume a known initial distribution over the action values
  and then updates the distribution exactly after each step (assuming that the

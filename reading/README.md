@@ -65,6 +65,7 @@
 * [폴리글랏 프로그래밍](polyglot_programming.md), 한빛미디어 (2014)
 * [ANSI Common Lisp](ansi_common_lisp.md), Prentice Hall (1995)
 * [Beginning Haskell: A Project-Based Approach](beginning_haskell_a_project_based_approach.md), Apress (2014)
+* [Discovering Modern C++: An Intensive Course for Scientists, Engineers, and Programmers](discovering_modern_cpp.md), Addison-Wesley (2016)
 * [Erlang and OTP in Action](erlang_and_otp_in_action.md), Manning (2011) 
 * [Fluent Python](fluent_python.md), O'Reilly (2015)
 * [Haskell Programming from first principles](haskell_programming_from_first_principles.md), (not yet)
