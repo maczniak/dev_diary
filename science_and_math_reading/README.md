@@ -6,6 +6,8 @@
 * [Systematic: How Systems Biology Is Transforming Modern Medicine](systematic.md), Bloomsbury Sigma (2017)
 * [Trinity: A Graphic History of the First Atomic Bomb](trinity.md), Hill and Wang (2013) translation
 * What If?: Serious Scientific Answers to Absurd Hypothetical Questions, Houghton Mifflin (2014) translation (done by April 2017)
+* [김홍표의 크리스퍼 혁명](crispr_revolution.md), 동아시아 (2017)
+* [송민령의 뇌과학 연구소](neuroscience_lab.md), 동아시아 (2017)
 * [이종필 교수의 인터스텔라](guide_to_the_science_behind_interstellar.md), 동아시아 (2014)
 * [이종필의 아주 특별한 상대성이론 강의](mr_lees_very_special_lecture_on_the_theory_of_relativity.md), 동아시아 (2015)
 

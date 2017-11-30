@@ -8,18 +8,24 @@
 * [From Mathematics to Generic Programming](from_mathematics_to_generic_programming.md), Addison-Wesley (2015)
 * [Implementing Functional Languages](implementing_functional_languages.md), Prentice Hall (1992)
 * [Logic for Computer Science, Second Edition](logic_for_computer_science_2nd.md), Dover (2015)
+* [Performance Modeling and Design of Computer Systems](performance_modeling_and_design_of_computer_systems.md), Cambridge University Press (2013)
 * [Purely Functional Data Structures](purely_functional_data_structures.md), Cambridge University Press (1998)
 * [Practical Foundations for Programming Languages, Second Edition](practical_foundations_for_programming_languages_2nd.md), Cambridge University Press (2016)
 * [Software Foundations](software_foundations.md) (2016)
 * [Types and Programming Languages](types_and_programming_languages.md), The MIT Press (2002)
 
+### Blockchain
+
 ## Data Science and Machine Learning
 
 * [파이썬과 케라스로 배우는 강화학습](reinforcement_learning_with_python_and_keras.md), 위키북스 (2017)
+* [처음 배우는 머신러닝](your_first_machine_learning.md), 한빛미디어 (2017)
 * [Data Science in Transportation](data_science_in_transportation.md), O'Reilly (2017)
+* [Design of Experiments for Reinforcement Learning](design_of_experiments_for_reinforcement_learning.md), Springer (2015)
 * [Fundamentals of Deep Learning](fundamentals_of_deep_learning.md), O'Reilly (2017)
 * [Graphing Data with R](graphing_data_with_r.md), O'Reilly (2016)
 * [Learning TensorFlow](learning_tensorflow.md), O'Reilly (2017)
+* [Mastering matplotlib](mastering_matplotlib.md), Packt Publishing (2015)
 * [Reinforcement Learning: An Introduction, Second edition](reinforcement_learning_an_introduction_2nd.md), The MIT Press (not yet)
 * [The Visual Display of Quantitative Information, Second Edition](visual_display_of_quantitative_information_2nd.md), Graphics Press LLC (2001)
 * [ゼロから作るDeep Learning](deep_learning_from_scratch.md), オライリージャパン (2016) translation
@@ -85,6 +91,7 @@
 * [Real World Haskell](real_world_haskell.md), O'Reilly (2008)
 * [Real World OCaml](real_world_ocaml.md), O'Reilly (2013)
 * [Redis Essentials](redis_essentials.md), Packt Publishing (2015)
+* [Ruminations on C++](ruminations_on_c++.md), Addison-Wesley (1996)
 * [SCALA for the Impatient](scala_for_the_impatient.md), Addison-Wesley (2012) translation
 * [Type-Driven Development with Idris](type_driven_development_with_idris.md), Manning (2017)
 * [You Don't Know JS: Async & Performance](you_dont_know_js_async_and_performance.md), O'Reilly (2015)
@@ -96,6 +103,7 @@
 
 * [An Introduction to Agent-Based Modeling](introduction_to_agent_based_modeling.md), The MIT Press (2015)
 * [Gravitational N-Body Simulations](gravitational_n_body_simulations.md), Cambridge University Press (2003)
+* [Natural Complexity: A Modeling Handbook](natural_complexity.md), Princeton University Press (2017)
 * [Introduction to the Modeling and Analysis of Complex Systems](introduction_to_the_modeling_and_analysis_of_complex_systems.md), Open SUNY Textbooks (2015)
 
 ## Software Engineering
@@ -119,6 +127,7 @@
 * [Mastering Full-Stack React Web Development](mastering_fullstack_react_web_development.md), Packt Publishing (2017)
 * [ng-book 2](ng_book_2.md), fullstack.io (2017)
 * [Node.js 6.x Blueprints](nodejs_6_blueprints.md), Packt Publishing (2016)
+* [Pro AngularJS](pro_angularjs.md), Apress (2014) translation
 * [Two Scoops of Django: Best Practices for Django 1.8](two_scoops_of_django_1.8.md), Two Scoops Press (2015) translation
 * [Web Development with Node and Express](web_development_with_node_and_express.md), O'Reilly (2014) translation
 * [파이썬 웹 프로그래밍: Django(장고)로 배우는 쉽고 빠른 웹 개발](python_web_programming_django.md), 한빛미디어 (2015)
