@@ -108,15 +108,82 @@ C++ thrives in mixed environments. It lives in the real world!
 
 ## Part II Classes and inheritance
 
+As every C++ programmer should know, run-time polymorphism occurs *only* when a
+ program calls a virtual function through a pointer or reference to a base-class
+ object. Less obvious may be the implications of this model. In particular, the
+ fact that object creation and copying are *not* run-time polymorphic profoundly
+ affects class design. Thus, containers can hold only values whose types are
+ known at compile time.<br>
+A more natural approach for C++ is to define a class whose purpose is to provide
+ *and hide* the indirection. Such classes are often called *handle classes*. In
+ its simplest form, a handle class lets us attach an object of a single type to
+ an object of any type in a particular inheritance hierarchy. Handles therefore
+ let us ignore the precise type with which we're dealing, while still avoiding
+ the memory-management problems that come with pointers.
+
 ### Chapter 4 Checklist for class authors
+
+If you don't want users to be able to copy objects of a class, make the copy
+ constructor (and probably also the assignment operator) private. Usually,
+ `operator=` should return an `X&` and end by saying `return *this;` for
+ consistency with the built-in assignment operators. If we free the old
+ destination value before copying the source value, and the source and
+ destination are the same object, then we might wind up freeing the source
+ before we copy it.<br>
+The curious `[]` syntax comes from the effort of C++ to balance C compatibility
+ with efficiency. A C++ implementation that does not wish to preempt an existing
+ C implementtion's `malloc` must therefore implement `new` directly in terms of
+ that `malloc`, and must not supply its own. Hence, the C++ library cannot
+ necessarily figure out how large an array is when freeing that array. Even
+ though `malloc` must store that size, it may store the size someplace that the
+ C++ library cannot portably access. As a compromise, C++ therefore requires its
+ users to tell the implementation whether what is being deleted is an array.<br>
+`Complex operator+(const Complex& x, const Complex& y);` Otherwise, expressions
+ such as `x+y+z` become impossible, because `x+y` is not an lvalue and therefore
+ may not have a non`const` reference bound to it.<br>
+Causing all classes to have virtual destructors automatically would violate the
+ C++ philosophy of making people pay for only what they use; it would be
+ analogous to leaving the landing gear extended all the time.
 
 ### Chapter 5 Surrogate classes
 
+`Vehicle parking_lot[1000];` In effect, we have said that `parking_lot` is a
+ collection of `Vehicle`s, not a collection of objects of classes derived from
+ `Vehicle`.
+
+In either alternative, the value of the operand of delete may be a null pointer
+ value. / The free function causes the space pointed to by ptr to be
+ deallocated, that is, made available for further allocation. If ptr is a null
+ pointer, no action occurs. (from C++/C standards)
+
 ### Chapter 6 Handles: Part 1
+
+This chapter will examine another kind of class, typically called a *handle*,
+ that will allow us to avoid copying objects unnecessarily, while preserving the
+ polymorphic behavior of surrogates. What we need is a way to obtain some of the
+ advantages of pointers, particularly the ability to avoid copying objects and
+ to use objects polymorphically, while avoiding some of the disadvantages, such
+ as the lack of safety. Because handles behave somewhat like pointers, people
+ sometimes also call them *smart pointers*. However, handles can behave
+ differently enough from pointers that thinking of them as just a kind of
+ pointer is probably too restrictive.<br>
+At one point, we will show where a small change in the implementation of the
+ handle class produces a large change in behavior.<br>
+To hide that address, we must avoid `operator->`, nd must choose explicitly
+ which `Point` operations we want our handles to make available.<br>
+The use count cannot, of course, be part of the handle. Nor can the use count be
+ part of the object.<br>
+When we come to the modification functions, however, things suddenly become
+ interesting. The reason is that we must now decide whether we want our handles
+ to have value semantics or pointer semantics. More generally, the difference
+ between objects and values shows up only when we try to change the objects.
 
 ### Chapter 7 Handles: Part 2
 
 ### Chapter 8 An object-oriented program
+
+Whenever you need a type field, you should stop to think whether defining a set
+ of classes related by inheritance might solve the problem more effectively.
 
 ### Chapter 9 Analysis of a classroom exercise: Part 1
 

@@ -219,7 +219,67 @@ Andrews' curves from the Pandas library can be useful when attempting to uncover
 
 ## Chapter 6: Customization and Configuration
 
+If you save the `<style-name>.mplstyle` file to the `~/.matplotlib/stylelib`
+ directory, you can reuse your custom style sheet with a call to
+ `style.use(<style-name>)`.<br>
+If the preceding `.mplstyle` code looks familiar, it's because it is also
+ available in the matplotlib `run` control configuration file,
+ `matplotlibrc`.<br>
+`mpl.gridspec.GridSpec()` and `mpl.gridspec.GridSpecFromSubplotSpec()`<br>
+[custom_projection_example.py][custom_projection_example_py],
+ [radar.py][radar_py] (in the book),
+ [Transformations Tutorial][transformations_tutorial], Joe Kington created an
+ open source project for equal-angle
+ [Stereonets in matplotlib][stereonets_in_matplotlib]. Stereonets, or Wulff net
+ are used in geological studies and research, and Dr. Kington's code provides
+ excellent examples of custom transforms and projections.<br>
+The matplotlib module offers two ways to override the default values for the
+ configuration settings---you can either run the control files, or run the
+ control parameters that are stored in-memory to make changes to a running
+ instance.<br>
+While commonly expanded to the *run control*, the `.rc` extension and `-rc`
+ suffix trace their origins to 1965 and the Multics (short for Multiplexed
+ Information and Computing Service) operating system, where `rc` stood for the
+ *run command*.<br>
+`mpl.get_configdir()`, `mpl.matplotlib_fname()`, `mpl.rcParams`,
+ `mpl.rcdefaults()`<br>
+[`matplotlibrc` template][matplotlibrc_template]
+* `agg.path.chucksize: 20000` - This improves the speed of operations slightly
+  and prevents an `Agg` rendering failure
+* `path.simplify: true` - This removes the invisible points to reduce the file
+  size and increase the rendering speed
+* `savefig.jpeg_quality: xx` - This lowers the default `.jpg` quality of the
+  saved files
+* `axes.formatter.limits` - This indicates when you use scientific notations for
+  exponents
+* `webagg.port` - This is the port that you should use for the web server in the
+  `WebAgg` backend
+* `webagg.port_retries` - With this, the number of other random ports will be
+  tried until the one that is available is found
+
+IPython startup options:
+ `--matplotlib=auto|gtk|gtk3|inline|ngagg|osx|qt|qt4|qt5|tk|wx`,
+ `--gui=glut|gtk|gtk3|none|osx|pyglet|qt|qt4|tk|wx`
+
+[custom_projection_example_py]: https://matplotlib.org/examples/api/custom_projection_example.html
+[radar_py]: https://github.com/masteringmatplotlib/custom-and-config/blob/master/lib/radar.py
+[transformations_tutorial]: https://matplotlib.org/tutorials/advanced/transforms_tutorial.html
+[stereonets_in_matplotlib]: https://github.com/joferkington/mplstereonet
+[matplotlibrc_template]: https://github.com/matplotlib/matplotlib/blob/master/matplotlibrc.template
+
 ## Chapter 7: Deploying matplotlib in Cloud Environments
+
+You will be utilizing the Landsat 8 data, which was made available through the
+ combined efforts of the United States Geological Survey (USGS) and the NASA
+ Landsat 8 project and the USGS EROS data archival services.<br>
+[PyData][pydata] events, [scikit-image][scikit_image] library (`skimage`, depend
+ on PIL), [ATLAS][atlas] (Automatically Tuned Linear Algebra Software, open
+ source BLAS implementation)<br>
+`DEBIAN_FRONTEND=noninteractive`
+
+[pydata]: https://pydata.org/
+[scikit_image]: http://scikit-image.org/
+[atlas]: http://math-atlas.sourceforge.net/
 
 ## Chapter 8: matplotlib and Big Data
 

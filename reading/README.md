@@ -1,3 +1,12 @@
+## Blockchain
+
+* [The Book of Satoshi](book_of_satoshi.md), e53 Publishing LLC (2014)
+* [Cryptoassets: The Innovative Investor's Guide to Bitcoin and Beyond](cryptoassets.md), McGraw-Hill Education (2018)
+* [Decentralized Applications](decentralized_applications.md), O'Reilly (2016)
+* [Game Theory and Mechanism Design](game_theory_and_mechanism_design.md), World Scientific (2014)
+* [Introduction to Reliable and Secure Distributed Programming, Second Edition](introduction_to_reliable_and_secure_distributed_programming_2nd.md), Springer (2011)
+* [The Science of the Blockchain](science_of_the_blockchain.md), Inverted Forest Publishing (2016)
+
 ## Computer Science
 
 * [개미 수열을 푸는 10가지 방법](look_and_say_sequence_in_10_ways.md), Leanpub (2017)
@@ -14,13 +23,12 @@
 * [Software Foundations](software_foundations.md) (2016)
 * [Types and Programming Languages](types_and_programming_languages.md), The MIT Press (2002)
 
-### Blockchain
-
 ## Data Science and Machine Learning
 
 * [파이썬과 케라스로 배우는 강화학습](reinforcement_learning_with_python_and_keras.md), 위키북스 (2017)
 * [처음 배우는 머신러닝](your_first_machine_learning.md), 한빛미디어 (2017)
 * [Data Science in Transportation](data_science_in_transportation.md), O'Reilly (2017)
+* [Deep Learning and the Game of Go](deep_learning_and_the_game_of_go.md), Manning (2018?)
 * [Design of Experiments for Reinforcement Learning](design_of_experiments_for_reinforcement_learning.md), Springer (2015)
 * [Fundamentals of Deep Learning](fundamentals_of_deep_learning.md), O'Reilly (2017)
 * [Graphing Data with R](graphing_data_with_r.md), O'Reilly (2016)
@@ -67,6 +75,7 @@
 ## Programming
 
 * [객체지향의 사실과 오해: 역할, 책임, 협력 관점에서 본 객체지향](essence_of_object_orientation.md), 위키북스 (2015)
+* [주식 자동매매 시스템 만들기](automatic_stock_trading_system_development.md), 한빛미디어 (2017)
 * [진짜 쉽고 쓸모 있는 언어 파이썬](really_easy_and_useful_language_python.md), 성안당 (2016)
 * [폴리글랏 프로그래밍](polyglot_programming.md), 한빛미디어 (2014)
 * [ANSI Common Lisp](ansi_common_lisp.md), Prentice Hall (1995)
@@ -88,6 +97,7 @@
 * [Pearls of Functional Algorithm Design](pearls_of_functional_algorithm_design.md), Cambridge University Press (2010)
 * [Practical Object-Oriented Design in Ruby](practical_object_oriented_design_in_ruby.md), Addison-Wesley (2013)
 * [Pro Spring Boot](pro_spring_boot.md), Apress (2016)
+* [Programming Rust: Fast, Safe Systems Development](programming_rust.md), O'Reilly (2017)
 * [Real World Haskell](real_world_haskell.md), O'Reilly (2008)
 * [Real World OCaml](real_world_ocaml.md), O'Reilly (2013)
 * [Redis Essentials](redis_essentials.md), Packt Publishing (2015)
@@ -120,6 +130,7 @@
 
 ## Web
 
+* [파이썬 웹 프로그래밍: Django(장고)로 배우는 쉽고 빠른 웹 개발](python_web_programming_django.md), 한빛미디어 (2015)
 * [Developing Web Apps with Haskell and Yesod, 2nd Edition](developing_web_apps_with_haskell_and_yesod_2nd.md), O'Reilly (2015)
 * [HTML5 for Web Designers, Second Edition](html5_for_web_designers_2nd.md), A Book Apart (2016) translation
 * [Identity & Data Security for Web Development](identity_and_data_security_for_web_development.md), O'Reilly (2016)
@@ -130,5 +141,4 @@
 * [Pro AngularJS](pro_angularjs.md), Apress (2014) translation
 * [Two Scoops of Django: Best Practices for Django 1.8](two_scoops_of_django_1.8.md), Two Scoops Press (2015) translation
 * [Web Development with Node and Express](web_development_with_node_and_express.md), O'Reilly (2014) translation
-* [파이썬 웹 프로그래밍: Django(장고)로 배우는 쉽고 빠른 웹 개발](python_web_programming_django.md), 한빛미디어 (2015)
 

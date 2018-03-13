@@ -15,6 +15,8 @@
  Interspaced Short Palindromic Repeats, CRISPR)'의 약자인 크리스퍼는 유전자의
  특정한 서열을 인식해서 자르고 유전자를 '편집'할 수 있다고 말한다.
 
+[homepage]: http://blog.naver.com/dongasiabook/221141176798
+
 ## 제0장. 미리 알아두면 좋을 몇 가지
 
 허망한 현근이 가뭇없이 사라지듯, ATP의 수명은 무척이나 짧아서 회전율(turnover)이

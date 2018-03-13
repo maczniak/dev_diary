@@ -3,6 +3,7 @@
 [Springer Theses][springer_theses]-the "best of the best", Recognizing
  Outstanding Ph.D. Research 
 
+[homepage]: http://www.springer.com/gp/book/9783319121963
 [springer_theses]: http://www.springer.com/series/8790
 
 ## 1. Introduction
