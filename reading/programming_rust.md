@@ -230,12 +230,12 @@ The moves always apply to the value proper, not the heap storage they own. For
  vectors and strings, the *value proper* is the three-word header alone; the
  potentially large element arrays and text buffers sit where they are in the
  heap.<br>
-The `std::mem::replace`` call moves out the valye of `composer[0].name`, leaving
+The `std::mem::replace` call moves out the value of `composer[0].name`, leaving
  `None` in its place, and passes ownership of the original value to its caller.
  In fact, using `Option` this way is common enough that the type provides a
  `take` method for this very purpose.<br>
-Assigning a value of a `Copy` type copies the value, rather than moving it. The
- standard `Copy` types include all the machine integer and floating-point
+**Assigning a value of a `Copy` type copies the value, rather than moving it.**
+ The standard `Copy` types include all the machine integer and floating-point
  numeric types, the `char` and `bool` types, and a few others. A tuple or
  fixed-size array of `Copy` types is itself a `Copy` type.<br>
 By default, `struct` and `enum` types are not `Copy`. If all the fields of your
@@ -254,9 +254,9 @@ The only difference between them is that an `Arc` is safe to share between
  reference count. Rust will prevent you from accidentally passing one across a
  thread boundary.<br>
 You can use any of `String`'s usual methods directly on an `Rc<String>`. Rust's
- memory and thread-safety guarantees depend on ensuring that no value is ever
- simultaneously shared and mutable. Rust assumes the referent of an `Rc` pointer
- might in general be shared, so it must not be mutable.<br>
+ memory and thread-safety guarantees depend on ensuring that **no value is ever
+ simultaneously shared and mutable**. Rust assumes the referent of an `Rc`
+ pointer might in general be shared, so it must not be mutable.<br>
 You cannot create a cycle without, at some point, making an older value point to
  a newer value. Since `Rc` pointers hold their referents immutable, it's not
  normally possible to create a cycle. However, Rust does provide ways to create
@@ -267,7 +267,7 @@ You cannot create a cycle without, at some point, making an older value point to
 ## 5. References
 
 References must never outlive their referents. To emphasize this, Rust refers to
- creating a reference to some value as *borrowing* the value: what you have
+ **creating a reference to some value as *borrowing* the value**: what you have
  borrowed, you must eventually return to its owner.<br>
 Shared references are `Copy`. Mutable references are not `Copy`.<br>
 As long as there are shared references to a value, not even its owner can modify
@@ -291,7 +291,7 @@ Rust also includes two kinds of *fat pointers*, two-word values carrying the
  reference to a value that implements a certain trait, carries a value's address
  and a pointer to the trait's implementation appropriate to that value, for
  invoking the trait's methods.<br>
-Rust's equivalent of a global variable is called a *static*. Evert static must
+Rust's equivalent of a global variable is called a *static*. Every static must
  be initialized. Mutable statics are inherently not thread-safe, and even in
  single-threaded programs, they can fall prey to other sorts of reentrancy
  problems. For these reasons, you may access a mutable static only within an
@@ -314,7 +314,7 @@ The path of ownership leading to the referent cannot be changed for the
 C++'s `std::map` promises that inserting new entries doesn't invalidate pointers
  to other entries in the map, but by making that promise, the standard precludes
  more cache-efficient designs like Rust's `BTreeMap`.<br>
-A concurrent Rust program that avoids `unsafe` code is free of data taces *by
+A concurrent Rust program that avoids `unsafe` code is free of data races *by
  construction*.<br>
 Since the rise of automatic memory management in the 1990s, the default
  architecture of all programs has been the sea of objects. Rust prefers for
@@ -568,7 +568,7 @@ You can either write your own checked conversion or use the `enum_primitive`
 These are called *tuple variants*. Like tuple structs, these constructors are
  functions that create new values. Enums can also have *struct variants*. In
  all, Rust has three kinds of enum variant, echoing the three kinds of struct.
- All constructors and fields of a public enum are aitomatically public.<br>
+ All constructors and fields of a public enum are automatically public.<br>
 In memory, enums with data are stored as a small integer *tag*, plus enough
  memory to hold all the fields of the largest variant. However, Rust makes no
  promises about enum layout.<br>
@@ -684,14 +684,14 @@ struct Salad {
 
 In Rust, generics are the more common choice. The first advantage is speed.
  There's no need for dynamic dispatch. The second advantage is that not every
- trait can support trait objects. Tratis support several features, such as
+ trait can support trait objects. Traits support several features, such as
  static methods, that work only with generics.<br>
 Everything defined in a trait `impl` must actually be a feature of the trait; if
  we wanted to add a helper method, we would have to define it in a separate
  `impl` block.<br>
 Rust lets you implement any trait on any type, as long as either the trait or
  the type is introduced in the current crate. Either the trait or the type must
- be new in the current crqte. This is called the *coherence rule*. It helps Rust
+ be new in the current crate. This is called the *coherence rule*. It helps Rust
  ensure that trait implementations are unique. You code can't
  `impl Write for u8`, because both `Write` and `u8` are defined in the standard
  library.<br>
@@ -947,6 +947,45 @@ Because the `from` and `into` conversion methods take ownership of their
 To provide fallible conversions into or out of your types, it's best to have a
  function or method that returns a `Result` type.
 
+What if you want to clone a `&str` or `&[i32]`? What you probably want is a
+ `String` or a `Vec<i32>`, but `Clone`'s definition doesn't permit that: by
+ definition, cloning a `&T` must always return a value of type `T`, and `str`
+ and `[u8]` are unsized. The `std::borrow::ToOwned` trait provides a slightly
+ looser way to convert a reference to an owned value. Unlike `clone`, which must
+ return exactly `Self`, `to_owned` can return anything you could borrow a `&Self` from: the `Owned` type must implement `Borrow<Self>`. You can borrow a `&[T]`
+ from a `Vec<T>`, so `[T]` can implement `ToOwned<Owned=Vec<T>>`, as long as `T`
+ implement `Clone`, so that we can copy the slice's elements into the vector.
+ Similarly, `str` implements `ToOwned<Owned=String>`, `Path` implements
+ `ToOwned<Owned=PathBuf>`, and so on.
+
+```rust
+trait ToOwned {
+    type Owned: Borrow<Self>;
+    fn to_owned(&self) -> Self:Owned;
+}
+
+enum Cow<'a, B: ?Sized + 'a>
+    where B: ToOwned
+{
+    Borrowed(&'a B),
+    Owned(<B as ToOwned>::Owned),
+}
+```
+
+In some cases you cannot decide whether to borrow or own until the program is
+ running; the `std::borrow::Cow` type (for "clone on write") provides one way to
+ do this. A `Cow<B>` either borrows a shared reference to a `B`, or owns a value
+ from which we could borrow such a reference. Since `Cow` implements `Deref`,
+ you can call methods on it as if it were a shred reference to a `B`. You can
+ also get a mutable reference to a `Cow`'s value by calling its `to_mut` method,
+ which returns a `&mut B`. Similarly, `Cow` has an `into_owned` method that
+ promotes the reference to an owned value if necessary, and then returns it,
+ moving ownership to the caller and comsuming the `Cow` in the process. One
+ common use for `Cow` is to return either a statically allocated string constant
+ or a computed string. This code uses `Cow`'s implementation of `Into` to
+ construct the values. Using `Cow` helps the function and its callers put off
+ allocation until the moment it becomes necessary.
+
 ## 14. Closures
 
 The closure is subject to the rules about borrowing and lifetimes. In short,
@@ -967,7 +1006,7 @@ This special syntax is built into the language. The `->` and return type are
  closures have exactly the same type.<br>
 Rust's closures are designed to be fast: faster than function pointers, fast
  enough that you can use them even in red-hot, performance-sensitive code. If
- you're familiar with C++ lambdas, you'll find that Rust closures are jsut as
+ you're familiar with C++ lambdas, you'll find that Rust closures are just as
  fast and compact, but safer. In most languages, closures are allocated in the
  heap, dynamically dispatched, and garbage collected. Worse, closures tend to
  rule out inlining.<br>
@@ -1193,7 +1232,7 @@ These methods index text by byte offsets, and measure its length in bytes,
 `String::new()` has no heap-allocated buffer, but will allocate one as
  needed.<br>
 The `&str` type cannot implement `Clone`: the trait requires `clone` on a `&T`
- to return a `T` vsalue, but `str` is unsized. However, `&str` does implement
+ to return a `T` value, but `str` is unsized. However, `&str` does implement
  `ToOwned`, which lets the implementer specify its owned equivalent, so
  `slice.to_owned()` returns a copy of `slice` as a fresh allocated `String`.<br>
 You cannot index a string slice with a single position, like `slice[i]`.
@@ -1206,7 +1245,7 @@ The standard library supports four main kinds of patterns:
 * A `String` or `&str` or `&&str`
 * A `FnMut(char) -> bool`
 * A `&[char]` (not a `&str`, but a slice of `char` values). If you write out the
-  list as an array literal, you may neeed to use an `as` expression to get the
+  list as an array literal, you may need to use an `as` expression to get the
   type right. Otherwise, Rust will be confused by the fixed-size array type
   `&[char; 2]`, which is unfortunately not a pattern type.
 
@@ -1266,13 +1305,580 @@ The template string must be a constant, so that Rust can check it against the
 You can extend these macros to support your own types by implementing the
  `std::fmt` module's formatting traits. And you can use the `format_args!` macro
  and the `std::fmt::Arguments` type to make your own functions and macros
- support the formatting language.
+ support the formatting language.<br>
+Since filename paths are not necessarily well-formed UTF-8, `std::path::Path`
+ isn't quite a textual type. A `Path`'s `display` method returns a value you can
+ format that sorts things out in a platform-appropriate way.<br>
+If you include the `#` character in the format parameter, Rust will pretty-print
+ the value. (`println!("{:#?}", map)`)<br>
+The `{:p}` notation formats references, boxes, and other pointer-like types as
+ addresses.<br>
+The named arguments resemble keyword arguments in Python, but this is just a
+ special feature of the formatting macros, not part of Rust's function call
+ syntax.<br>
+`{:>1$}`, `{:>width?}`, `{:>width$.limit$}`, `{:.*}` (there is no corresponding
+ syntax for the field width.)<br>
+At compile time, the `format_args!` macro parses the template string and checks
+ it against the arguments' types, reporting an error if there are any problems.
+ At runtime, it evaluates the arguments and builds an `Arguments` value carrying
+ all the information necessary to format the text. Constructing an `Arguments`
+ value is cheap: it's just gathering up some pointers. No formatting work takes
+ place yet.<br>
+The `File` type implements the `std::io::Write` trait, whose `write_fmt` method
+ takes an `Argument` and does the formatting.
+
+```rust
+macro_rules! log { // no ! needed after name in macro definitions
+    ($format:tt, $($arg:expr),*) => (
+        write_log_entry(format_args!($format, $($arg),*))
+    )
+}
+```
+
+The external `regex` crate is Rust's official regular expression library. It has
+ good support for Unicode, but it can search byte strings as well. Although it
+ doesn't support some features you'll often find in other regular expression
+ packages, like backreferences and look-around patterns, those simplifications
+ allow `regex` to ensure that searches take time linear in the size of the
+ expression and in the length of the text being searched. These guarantees,
+ among others, make `regex` safe to use even with untrusted expressions
+ searching untrusted text. Although the `regex` crate is not in `std`, it is
+ maintained by the Rust library team, the same group responsible for `std`.<br>
+The `lazy_static` crate provides a nice way to construct static values lazily
+ the first time they are used.<br>
+The Unicode Normalization Form C and Normalization Form D (NFC and NFD) use the
+ maximally composed and maximally decomposed forms of each character, but do not
+ try to unify compatibility equivalent sequences. The NFKC and NFKD
+ normalization forms are like NFC and NFD, but nomalize all compatibility
+ equivalent sequences to some simple representative of their class. The World
+ Wide Web Consortium's "Character Model For the World Wide Web" recommends using
+ NFC for all content. The Unicode Identifier and Pattern Syntax annex suggests
+ using NFKC for identifiers in programming languages, and offers principles for
+ adapting the form when necessary. As long as a text uses no unassigned code
+ points when it is normalized, Unicode promises that its normalized form will
+ not change in future versions of the standard. Rust's `unicode-normalization`
+ crate provides a trait that adds methods to `&str` to put the text in any of
+ the four normalized forms.
 
 ## 18. Input and Output
 
+The four `std::io` traits `Read`, `BufRead`, `Write`, and `Seek` are so commonly
+ used that there's a `prelude` module containing only those traits:
+ `use std::io::prelude::*;`<br>
+We also make a habit of importing the `std::io` module itself. They `self`
+ keyword declares `io` as an alias to the `std::io` module:
+ `use std::io::{self, Read, Write, ErrorKind};`<br>
+Other character sets are supported with the open source `encoding` crate.<br>
+`reader.read_exact(&mut buf)` reads exactly enough data to fill the given
+ buffer. If the reader runs out of data before reading `buf.len()` bytes, this
+ returns an `ErrorKind::UnexpectedEof` error.<br>
+There is no method for closing a reader. Readers and writers typically implement
+ `Drop` so that they are closed automatically.<br>
+If the reader is at the end of the input, `reader.read_line(&mut line)` leaves
+ `line` unchanged and returns `Ok(0)`.<br>
+Rust standard library protects `stdin` with a mutex. We call `.lock()` to lock
+ `stdin` for the current thread's exclusive use; it returns a `StdinLock` value
+ that implements `BufRead`. At the end of the loop, the `StdinLock` is dropped,
+ releasing the mutex. All of the C standard input and output functions obtain a
+ lock behind the scenes.<br>
+In most languages, files are buffered by default. In Rust, a `File` is not
+ automatically buffered.
+
+```rust
+let lines = reader.lines().collect::<io::Result<Vec<String>>>()?;
+
+// If you can collect items of type T into a collection of type C then you can
+//  collect items of type Result<T, E> into a result of type Result<C, E>.
+impl<T, E, C> FromIterator<Result<T, E>> for Result<C, E>
+    where C: FromIterator<T>
+{
+    ...
+}
+```
+
+The `print` macros don't return a `Result`; they simply panic if the write
+ fails. Since they write to the terminal, this is rare.<br>
+When a `BufWriter` is dropped, all remaining buffered data is written to the
+ underlying writer. However, if an error occurs during this write, the error is
+ ignored.<br>
+`OpenOptions` methods `.append()`, `.write()`, `.create_new()`, and so on are
+ designed to be chained like this: each one returns `self`. It's called a
+ builder.<br>
+Seeking within a file is slow. Whether you're using a hard disk or a solid-state
+ drive (SSD), a seek takes as long as reading several megabytes of data.<br>
+For technical reasons, `io::stdin().lock()` doesn't work. The lock holds a
+ reference to the `Stdin` value, and that means the `Stdin` value must be stored
+ somewhere so that it lives long enough.<br>
+`String` does not implement `Write`. To build a string using `Write`, first
+ write to a `Vec<u8>`, then use `String::from_utf8(vec)` to convert the vector
+ to a string. `Cursor::new(buf)` creates a `Cursor`, a buffered reader that
+ reads from `buf`. This is how you create a reader that reads from a `String`.
+ The argument `buf` can be any type that implements `AsRef<[u8]>`. `Cursor`s
+ have just two fields: `buf` itself; and an integer, the offset in `buf` where
+ the next read will start.<br>
+The `byteorder` crate offers `ReadBytesExt` and `WriteBytesExt` traits that add
+ methods to all readers and writers for binary input and output. The `flate2`
+ crate provides adapter methods for reading and writing `gzip`ped data. The
+ `serde` crate is for serialization and deserialization: it converts back and
+ forth between Rust struts and bytes. `serde` also includes support for deriving
+ the two key `serde` traits: `#[derive(Serialize, Deserialize)]`<br>
+`OsStr` is a string type that's a superset of UTF-8. Its job is to be able to
+ represent all filenames, command-line arguments, and environment variables on
+ the current system, whether they're valid Unicode or not. On Unix, an `OsStr`
+ can hold any sequence of bytes. On Windows, an `OsStr` is stored using an
+ extension of UTF-8 that can encode any sequence of 16-bit-values, including
+ unmatched surrogates. `std::path::Path` is purely a convenience. `Path` is
+ exactly like `OsStr`, but it adds many handy filename-related methods. For an
+ individual component of a path, use `OsStr`.<br>
+For each string type, there's a corresponding owning type: a `String` owns a
+ heap-allocated `str`, a `std::ffi::OsString` owns a heap-allocated `OsStr`, and
+ a `std::path::PathBuf` owns a heap-allocated `Path`. All three of these types
+ implement a common trait, `AsRef<Path>`, so we can easily declare a generic
+ function that accepts "any filename type" as an argument.<br>
+If `path2` is an absolute path, `path1.join(path2)` just returns a copy of
+ `path2`, so this method can be used to convert any path to an absolute
+ path.<br>
+These are three methods for converting `Path`s to strings: `.to_str()`,
+ `.to_string_lossy()`, `.display()`<br>
+`#[cfg(unix)]`, `#[cfg(not(unix))]`, `#[cfg(target_os = "ios")]`<br>
+As of this writing, the online documentation at https://doc.rust-lang.org/std is
+ generated by running `rustdoc` on the standard library---on Linux. This means
+ that system-specific functionality for macOS, Windows, and other platforms does
+ not show up in the online documentation. The best way to find it is to use
+ `rustup doc` to see the HTML documentation for your platform.<br>
+There's a `prelude` module that can be used to enable all of Unix-specific
+ extensions at once: `use std::os::unix::prelude::*;`<br>
+Use the `native_tls` crate for SSL/TLS support.<br>
+The `mio` crate provides asynchronous input and output support. MIO is very
+ low-level. It provides a simple event loop and asynchronous methods for
+ reading, writing, connecting, and accepting connection---basically an
+ asynchronous copy of the whole networking API. There's also the experimental
+ `tokio` crate, which wraps the `mio` event loop in a futures-based API,
+ reminiscent of JavaScript promises. The `reqwest` crate offers a beautiful API
+ for HTTP clients. The `iron` framework for HTTP servers offers high-level
+ touches such as the `BeforeMiddleware` and `AfterMiddleware` traits, which help
+ you compose an app from pluggable parts. The `websocket` crate implements the
+ WebSocket protocol.<br>
+`Err(format!("{}", response.status()))?;`
+
 ## 19. Concurrency
+
+> In the long run it is not advisable to write large concurrent programs in
+> machine-oriented languages that permit unrestricted use of store locations and
+> their addresses. There is just no way we will be able to make such programs
+> reliable (even with the help of complicated hardware mechanisms).<br>
+> ---Per Brinch Hansen (1977)
+
+> Patterns for communication are patterns for parallelism. ---Whit Morriss
+
+Approaches that systems programmers commonly use include the following:
+ background thread, worker pools, pipelines, data parallelism, sea of
+ synchronized objects, and atomic integer operations<br>
+We'll cover three ways to use Rust threads: fork-join parallelism, channels, and
+ shared mutable state
+
+`spawn()` returns a value called a `JoinHandle`. We use the `.join()` method of
+ the `JoinHandle`s we collected earlier to wait for all eight threads to finish.
+ Joining threads is often necessary for correctness, because a Rust program
+ exits as soon as `main` returns, even if other threads are still running.
+ Destructors are not called; the extra threads are just killed.<br>
+`handle.join()` returns a `std::thread::Result` that's an error if the child
+ thread panicked. In Rust, panic is safe and per thread. The boundaries between
+ threads serve as a firewall for panic. The default behavior in Java and C# is
+ for exceptions in child threads to be dumped to the terminal and then
+ forgotten. In C++, the default is to abort the process.<br>
+The standard library provides another way: atomic reference counting. As long as
+ *any* thread owns an `Arc<GigabyteMap>`, it will keep the map alive, even if
+ the parent thread bails out early.<br>
+Crossbeam's *scoped threads* support fork-join parallelism quite naturally.<br>
+The Rayon library, by Niko Matsakis, is another example. `rayon::join(fn1, fn2)`
+ simply calls both functions and returns both result. The `.par_iter()` method
+ creates a `ParallelIterator`. In both cases, Rayon uses its own pool of worker
+ threads to spread out the work when possible. Behind the scnes, Rayon balances
+ workloads across threads dynamically, using a technique called *work-stealing*.
+ As a bonus, Rayon supports shared references across threads. Any parallel
+ processing that happens behind the scenes is guaranteed to be finished by the
+ time `reduce_with` returns. `.weight_max()` is a hint to Rayon that these tasks
+ are very CPU-intensive.
+
+```rust
+filenames.par_iter()
+    .map(|filename| process_file(filename, glossary))
+    .reduce_with(|r1, r2| {
+        if r1.is_err() { r1 } else { r2 }
+    })
+    .unwrap_or(Ok(()))
+```
+
+A channel is a thread-safe queue.<br>
+Ownership is transferred from the sending thread to the receiving thread.<br>
+Sending a value moves it rather than copying it, and moves are fast.<br>
+Channels are typed.<br>
+`sender.send(text)` moves the value `text` into the channel. Ultimately, it will
+ be moved again to whoever receives the value.<br>
+The `send` and `recv` methods both return `Result`s, but these methods fail only
+ if the other end of the channel has been dropped.<br>
+`Receiver`s are iterable.<br>
+The `mpsc` part of `std::sync::mpsc` stands for *multi-producer,
+ single-consumer*.<br>
+`Sender<T>` implements the `Clone` trait. A `Receiver<T>` can't be cloned, so if
+ you need to have multiple threads receiving values from the same channel, you
+ need a `Mutex`.<br>
+Rust channels are carefully optimized. When a channel is first created, Rust
+ uses a special "one-shot" queue implementation. If you send a second value,
+ Rust switches to a different queue implementation. And if you clone the
+ `Sender`, Rust must fall back on yet another implementation, one that is safe
+ when multiple threads are trying to send values at once. But even the slowest
+ of these three implementations is a lock-free queue, so sending or receiving a
+ value is at most a few atomic operations and a heap allocation, plus the move
+ itself. System calls are needed only when the queue is empty and the receiving
+ thread therefore needs to put itself to sleep.<br>
+Unix pipes use an elegant trick to provide some backpressure, so that fast
+ senders are forced to slow down: each pipe on a Unix system has a fixed size,
+ and if a process tries to write to a pipe that's momentarily full, the system
+ simply blocks that process until there's room in the pipe. The Rust equivalent
+ is called a synchronous channel. When you create it, you specify how many
+ values it can hold. For a synchronous channel, `sender.send(value)` is
+ potentially a blocking operation.<br>
+Type that implement `Send` are safe to pass by value to another thread. They can
+ be moved across threads. Types that implement `Sync` are safe to pass by
+ non-`mut` reference to another thread. They can be shared across threads. When
+ you `spawn` a thread, the closure you pass must be `Send`, which means all the
+ values it contains must be `Send`. Similarly, if you try to want to send values
+ through a channel to another thread, the values must be `Send`.<br>
+A struct or enum is `Send` if its fields are `Send`, and `Sync` if its fields
+ are `Sync`.<br>
+`Sync` - `i32`, `bool`, `&str`, `String`, `TCPStream`,
+ `HashMap<String, usize>`<br>
+`Send` - all `Sync`s, `Cell<usize>`, `Receiver<u8>`<br>
+non-`Sync` and non-`Send` - `Rc<String>`, `*mut u8`
+
+```rust
+// Can we build somthing like iterator pipelines for thread pipelines?
+impl<T> OffThreadExt for T
+    where T: Iterator + Send + 'static,
+          T::Item: Send + 'static
+{
+    fn off_thread(self) -> mpsc::IntoIter<Self::Item> {
+        let (sender, receiver) = mpsc::sync_channel(1024);
+
+        spawn(move || {
+            for item in self {
+                if sender.send(item).is_err() {
+                    break;
+                }
+            }
+        });
+
+        receiver.into_iter()
+    }
+}
+```
+
+Data races are undefined behavior in C++ and Go. Managed languages like Java and
+ C# promise not to crash, but the results of data races are still nonsence.<br>
+Mutexes support programming with *invariants*, rules about the protected data
+ that are true by construction when you set it up and maintained by every
+ critical section.<br>
+In C++, as in most languages, the data and the lock are separate objects. Even
+ in Java, where there is some notional association between objects and mutexes,
+ the relationship does not run very deep.<br>
+`let mut guard = self.waiting_list.lock().unwrap();`<br>
+The `MutexGuard<WaitingList>` value returned by this method call is a thin
+ wrapper around a `&mut WaitingList`.<br>
+In Rust, `mut` means *exclusive access*. Non-`mut` means *shared access*.<br>
+You may recall that `std::cell::RefCell` does the same, except without trying to
+ support multiple threads. `Mutex` and `RefCell` are both flavors of interior
+ mutability.<br>
+Use a more structured approach when you can; use a `Mutex` when you must.<br>
+The lock in a `Mutex` is not a recursive lock.<br>
+`Mutex::lock()` returns a `Result`, for the same reason that
+ `JoinHandle::join()` does. If a thread panics while holding a `Mutex`, Rust
+ marks the `Mutex` as *poisoned*. Any subsequent attempt to `lock` the poisoned
+ `Mutex` will get an error result. You can still lock a poisoned mutex and
+ access the data inside, with mutual exclusion fully enforced; see the
+ documentation for `PoisonError::into_inner()`.<br>
+We can add a `Mutex` around the `Receiver` and share it anyway. We use an
+ `Arc<Mutex<Receiver<T>>>`<br>
+In cases like this, a mutex can work, but it's an unnecessary bottleneck.
+ Whereas a mutex has a single `lock` method, a read/write lock (`RwLock`) has
+ two locking methods, `read` and `write`.<br>
+A condition variable is always about a particular true-or-false condition about
+ some data protected by a particular `Mutex`. A `Condvar` has methods `.wait()`
+ and `.notify_all()`. `wait()` takes a `MutexGuard` object by value, consumes
+ it, and returns a new `MutexGuard` on success. This captures the intuition that
+ the `wait` method releases the mutex, then reacquires it before returning.<br>
+On the x86-64 architecture, this `.fetch_add()` call compiles to a `lock incq`
+ instruction, where an ordinary `n += 1` might compile to a plain `incq`
+ instruction or any number of variations on that theme. The Rust compiler also
+ has to forgo some optimizations around the atomic operation, since---unlike a
+ normal load or store---it's legitimately observerable by other threads right
+ away. The argument `Ordering::SeqCst` is a memory ordering. Memory orderings
+ are something like transaction isolation levels in a database. Memory orderings
+ are crucial to program correctness, and they are tricky to understand and
+ reason about. Happily, the performance penalty for choosing sequential
+ consistency, the strictest memory ordering, is often quite low---unlike the
+ performance penalty for putting a SQL database into `SERIALIZABLE` mode. So
+ when in doubt, use `Ordering::SeqCst`. Rust inherits several other memory
+ ordering from Standard C++ atomics. One simple use of atomics is for
+ cancellation.<br>
+The `AtomicBool` could be replaced with a `Mutex<bool>` or a channel. The main
+ difference is that atomics have minimal overhead. Atomic operations never use
+ system calls. A load or store often compiles to a single CPU instruction.
+ Atomics are a form of interior mutability, like `Mutex` or `RwLock`, so their
+ methods take `self` by shared (non-`mut`) reference.
+
+Static variables are also immutable by default, so there is no way to get a
+ `mut` reference to one. A `static` can be declared `mut`, but then accessing it
+ is unsafe.<br>
+We use `ATOMIC_USIZE_INIT` (constant) instead of the expression
+ `AtomicUsize::new(0)` because the initial value of a static must be a constant;
+ as of Rust 1.17, method calls are not allowed.<br>
+Static initializers can't call functions. We can use the `lazy_static` crate to
+ get around this problem. Using `lazy_static!` imposed a tiny performance cost
+ on each access to the static data. The implementation uses `std::sync::Once`, a
+ low-level synchronization primitive designed for one-time initialization.
+ Behind the scenes, each time a lazy static is accessed, the program executed an
+ atomic load instruction to check that initialization has already occurred.
 
 ## 20. Macros
 
+Rust macros take a different approach, similar to Scheme's `syntax-rules`.<br>
+Rust macros never insert unmatched brackets or parentheses. And Rust macros come
+ with pattern matching, making it easier to write macros that are both
+ maintainable and appealing to use.<br>
+A few, like `file!`, `line!`, and `macro_rules!` itself, are bulit into the
+ compiler.<br>
+Incidentally, you can use square brackets or curly braces instead of parentheses
+ around the pattern or the template; it makes no difference to Rust. Likewise,
+ when you call a macro, these are all equivalent. The only difference is that
+ semicolons are usually optional after curly braces. By convention, we use
+ parentheses when calling `assert_eq!`, square brackets for `vec!`, and curly
+ braces for `macro_rules!`; but it's just a convention.<br>
+Macro patterns are a mini-language within Rust.<br>
+The real macro computes `$left` and `$right` only once and stores their values.
+ Since we don't want assertions to move values, the macro borrows references
+ instead. Rust knows when it's handling expressions, so it effectively adds
+ parentheses whenever it pastes one expression into another.<br>
+`$( ... )[ ,;][*+]`<br>
+`<[_]>` is an unusual way to write the type "slice of something", while
+ expecting Rust to infer the element type. Types whose names are plain
+ identifiers can be used in expressions without any fuss, but types like `fn()`,
+ `&str`, or `[_]` must be wrapped in angle brackets.<br>
+`$( v.push($x); )*` inserts a call to `v.push()` for each expression in
+ `$x`.<br>
+Unlike the rest of Rust, patterns using `$( ... ),*` do not automatically
+ support an optional trailing comma.<br>
+built-in macros - `file!()`, `line!()`, `column!()`, `stringify!(...tokens...)`,
+ `concat!(str0, str1, ...)`, `cfg!(...)`, `env!("CARGO_PKG_VERSION")`
+ ([Cargo-specific environment variables][cargo_envvars]),
+ `option_env!("VAR_NAME")`, `include!("file.rs")`, `include_str!("file.txt")`,
+ `include_bytes!("file.dat")`<br>
+debugging macros - `rustc -Z unstable-options --pretty`, `log_syntax!()` with
+ `#![feature(log_syntax)]`, `trace_macros!(true)` with
+ `#![feature(trace_macros)]`<br>
+The last two, `ident` and `tt`, support matching macro arguments that don't look
+ like Rust code.<br>
+`#![recursion_limit = "256"]` (default 64)
+
+```rust
+macro_rules! impl_from_num_for_json {
+    ( $( $t:ident )* ) => {
+        $(
+            impl From<$t> for Json {
+                fn from(n: $t) -> Json {
+                    Json::Number(n as f64)
+                }
+            }
+        )*
+    };
+}
+
+impl_from_num_for_json!(u8 i8 u16 i16 u32 i32 u64 i64 usize isize f32 f64);
+```
+
+The macro unexpectedly supports the use of variables and even arbitrary Rust
+ expressions inside the JSON data, a handy extra feature. Because
+ `(width * 9.0 / 4.0)` is parenthesized, it's a single token tree, so the macro
+ successfully matches it with `$value:tt` when parsing the object.<br>
+Rust renames the variable for you! This feature, first implemented in Scheme
+ macros, is called *hygiene*, and so Rust is said to have *hygiene macros*.<br>
+Hygiene in Rust is limited to local variables and arguments. When it comes to
+ constants, types, methods, modules, and macro names, Rust is "colorbind." This
+ means that if our `json!` macro is used in a module where `Box`, `HashMap`, or
+ `Json` is not in scope, the macro won't work.<br>
+Macros that are visible in one module are automatically visible in its child
+ modules. To export macros from a module "upward" to its parent module, use the
+ `#[macro_use]` attribute.<br>
+To import macros from another crate, use `#[macro_use]` on the `extern crate`
+ declaration. To export macros from your crate, mark each public macro with
+ `#[macro_export]`. An exported macro shouldn't rely on anything being in scope.
+ Even features of the standard prelude can be shadowed. The macro should use
+ absolute paths to any names it uses. `macro_rules!` provides the special
+ fragment `$crate`. It acts like an absolute path to the root module of the
+ crate where the macro was defined. Instead of saying `Json`, we can write
+ `$crate::Json`, which works even if `Json` was not imported. `HashMap` can be
+ changed to either `::std::collections::HashMap` or `$crate::macros::HashMap`.
+ In the latter case, we'll have to re-export `HashMap`, because `$crate` can't
+ be used to access private features of a crate.<br>
+[*The Little Book of Rust Macros*][little_book_of_rust_macros], by Daniel Keep
+ et al., is an excellent handbook of advanced `macro_rules!` programming.<br>
+Rust 1.15 introduced a sepcial mechanism called
+ [*procedural macros*][procedural_macros] ([1st][procedural_macros_1st]). This
+ feature supports extending the `#[derive]` attribute to handle custom traits.
+ What makes a procedural macro "precedural" is that it's implemented as a Rust
+ function, not a declarative rule-set.<br>
+An alternative is to generate Rust code using a build script. The
+ [Cargo documentation][cargo_build_scripts] shows how to do it step by step.
+
+[cargo_envvars]: https://doc.rust-lang.org/cargo/reference/environment-variables.html
+[little_book_of_rust_macros]: https://danielkeep.github.io/tlborm/book/README.html
+[procedural_macros]: https://doc.rust-lang.org/book/second-edition/appendix-04-macros.html
+[procedural_macros_1st]: https://doc.rust-lang.org/book/first-edition/procedural-macros.html
+[cargo_build_scripts]: https://doc.rust-lang.org/cargo/reference/build-scripts.html
+
 ## 21. Unsafe Code
+
+All of Rust's usual safety checks still apply: type checks, lifetime checks, and
+ bounds checks on indices all occur normally. Unsafe code just enables a small
+ set of additional features.<br>
+An unsafe feature is one that imposes a *contract*: rules that Rust cannot
+ enforce automatically, but which you must nontheless follow to avoid *undefined
+ behavior*. Undefined behavior is behavior Rust firmly assumes your code could
+ never exhibit.<br>
+An `Ascii` is nothing more than a wrapper around a `Vec<u8>`. hidden inside a
+ module that enforces extra rules about its contents. A type of this sort is
+ called a *newtype*, a common pattern in Rust. A newtype and its element have
+ identical representations in memory, so constructing a newtype doesn't require
+ any machine instructions at all.<br>
+You may call `unsafe` functions only within `unsafe` blocks.<br>
+Whether the function uses unsafe features in its body is irrelevant; what
+ matters is the presence of a contract.<br>
+The classic examples of unsafe traits are `std::marker::Send` and
+ `std::marker::Sync`. These traits don't define any methods, so they're trivial
+ to implement for any type you like. But they do have contracts.
+
+You can use raw pointers to form all sorts of structures that Rust's checked
+ pointer types cannot, like doubly linked lists or arbitrary graphs of
+ objects.<br>
+This example has no `unsafe` blocks: creating raw pointers, passing them around,
+ and comparing them are all safe. Only dereferencing a raw pointer is
+ unsafe.<br>
+A raw pointer to an unsized type is a fat pointer, just as the corresponding
+ reference or `Box` type would be.<br>
+Raw pointers do not implement `Deref`, so deref coercions do not apply to
+ them.<br>
+Unlike the `+` operator in C and C++, Rust's `+` does not handle raw pointers,
+ but you can perform pointer arithmetic via their `offset` and `wrapping_offset`
+ methods. There is no standard operation for finding the distance between two
+ pointers, as the `-` operator does in C and C++. It is undefined behavior to
+ use `offset` to produce a pointer beyond that point, or before the start of the array, even if you never dereference it. If you do need to offset pointers
+ beyond the limits of the array they are associated with, you can use the
+ `wrapping_offset` method.<br>
+Rust implicitly coerces references to raw pointers. Note that `as` will not
+ convert raw pointers to references. Such conversions would be unsafe, and `as`
+ should remain a safe operation. Instead, you must dereference the raw pointer
+ (in an `unsafe` block), and then borrow the resulting value. Be very careful
+ when you do this: a reference produced this way has an unconstrained
+ lifetime.<br>
+Many types have `as_ptr` and `as_mut_ptr` methods that return a raw pointer to
+ their contents. Owning pointer types like `Box`, `Rc`, and `Arc` have
+ `into_raw` and `from_raw` functions that convert to and from raw pointers.<br>
+Unlike references, raw pointers are neither `Send` nor `Sync`. As a result, any
+ type that includes raw pointers does not implement these traits by default.
+ There is nothing inherently unsafe about sending or sharing raw pointers
+ between threads. But given the roles raw pointers typically play, the language
+ designers considered this behavior to be the more helpful default.<br>
+The `PhantomData` that occupies no space is necessary for Rust to know how to
+ treat lifetimes in code that uses `RefWithFlag`.<br>
+The call `std::mem::size_of::<T>()` returns the size of a value of type `T`, in
+ bytes, and `std::mem:align_of::<T>()` returns its required alignment. Given a
+ reference to an unsized value, the `std::mem::size_of_val` and
+ `std::mem::align_of_val` functions return the value's size and alignment.<br>
+Types like `Vec`, `HashMap`, `Box`, and so on track their buffers dynamically
+ by transferring ownership via `std::ptr::read(src)` and
+ `std::ptr::write(dest, value)`. You cannot do these things with any of Rust's
+ safe pointer types. They all require their referents to be initialized at all
+ times.
+
+The Emacs text editor uses a simple data structure called a *gap buffer* which
+ can insert and delete characters in constant time. A gap buffer keeps its
+ spare capacity in the midst of the text, at the point where editing is taking
+ place. This spare capacity is called the *gap*. Inserting or deleting elements
+ at the gap is cheap. You can move the gap to any location you like by shifting
+ text from one side of the gap to the other. When the gap is empty, you migrate
+ to a larger buffer.<br>
+This has the capacity we need, but its length always remains zero. GapBuffer
+ puts its elements and the gap in this `Brc`'s "unused" capacity.<br>
+There are better ways to handle this using the `RawVec` type from the `alloc`
+ crate, but that crate is still unstable.<br>
+The `drop_in_place` function is a utility that behaves like
+ `drop(std::ptr::read(ptr))`, but doesn't bother moving the value to its
+ caller (and hence works on unsized types).
+
+Rust's `std::os::raw` module defines a set of Rust types that are guaranteed to
+ have the same representation as certain C types.<br>
+Whereas C and C++ guarantee that a structure's members appear in memory in the
+ order they're declared, each at a distinct address, Rust reorders fields to
+ minimize the overall size of the struct, and zero-sized types take up no space.
+ The `#[repr(C)]` attribute tells Rust to follow C's rules. Without
+ `#[repr(C)]`, Rust would use a single byte to represent the `git_error_code`
+ enum; with `#[repr(C)]`, Rust uses a value the size of a C `int`, just as C
+ would. Starting the precediing definition with `#[repr(i16)]` would give you a
+ 16-bit type with the same representation as the following C++ enum:
+ `enum git_error_code: int16_t {`<br>
+In the `std::ffi` module, the `CString` and `CStr` types represent owned and
+ borrowed null-terminated arrays of bytes.<br>
+An `extern` block declares functions or variables defined in some other library
+ that the final Rust executable will be linked with. Rust assumes that functions
+ declared inside `extern` blocks use C conventions for passing arguments and
+ accepting return values. They are defined as `unsafe` functions.<br>
+The cost of `CString::new` depends on what type you pass it. It accepts anything
+ that implements `Into<Vec<u8>>`. Passing a `&str` entails an allocation and a
+ copy, as the conversion to `Vec<u8>` builds a heap-allocated copy of the string
+ for the vector to own. But passing a `String` by value simply consumes the
+ string and takes over its buffer, so unless appending the null character forces
+ the buffer to the resized, the conversion requires no copying of text or
+ allocation at all.<br>
+To use functions provided by a particular library, you can place a `#[link]`
+ attribute atop the `extern` block that names the library Rust should link the
+ executable with. `#[link]` attributes work in library crates, too. When you
+ build a program that depends on other crates, Cargo gathers together the link
+ notes from the entire dependency graph, and includes them all in the final
+ link.<br>
+You can tell Rust where to search for libraries by writing a *build script*,
+ Rust code that Cargo compiles and runs at build time. Build scripts can do all
+ sorts of things: generate code dynamically, compile C code to be included in
+ the crate, and so on. When Cargo runs the build script, it parses the build
+ script's output for information of this sort.<br>
+It is a Cargo convention that a crate that provides acess to a C library should
+ be named `LIB-sys`, where `LIB` is the name of the C library. A `-sys` crate
+ should contain nothing but the statically linked library and Rust modules
+ containing `extern` blocks and type definitions. Higher-level interfaces then
+ belong in crates that depend on the `-sys` crate.<br>
+If you are creating a Rust interface to a complex C library, you may want to try
+ using the `bindgen` crate, which has functions you can use from your build
+ script to parse C header files and generate the corresponding Rust declarations
+ automatically.<br>
+In C it's perfectly normal to initialize a variable by passing a pointer to it
+ to some function that fills in its value. But Rust won't let us borrow a
+ reference to an uninitialized variable. The `std::mem::uninitialized` function
+ returns a value of any type you like, except that the value consists entirely
+ of uninitialized bits, and no machine code is actually spent producing the
+ value. Rust considers it to have been assigned some value, so it lets us borrow
+ the reference to it. In the general case, this is very unsafe. Reading an
+ uninitialized value is undefined behavior, and if any part of the value
+ implements `Drop`, even dropping it is undefined behavior as well. You can pass
+ it to `std::mem::forget`, which takes ownership of its argument and makes it
+ disappear without dropping it.<br>
+Rust closures cannot serve as C function pointers: a closure is a value of some
+ anonymous type carrying the values of whatever variables it captures, or
+ references to them. However, Rust `fn` types work fine, as long as you declare
+ them `extern` so that Rust knows to use the C calling conventions.<br>
+It is undefined behavior for a panic to cross language boundaries. The call from
+ `atexit` to `shutdown` is such a boundary, so it is essential that `shutdown`
+ not panic. This is why `shutdown` can't simply use `.expect` to handle errors.
+ Instead, it must report the error and terminate the process itself. POSIX
+ forbids calling `exit` within an `atexit` handler, so `shutdown` calls
+ `std::process::abort` to terminate the program abruptly.
 

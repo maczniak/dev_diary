@@ -16,6 +16,10 @@
 * [Fundamentals of Systems Biology: From Synthetic Circuits to Whole-cell Models](fundamentals_of_systems_biology.md), CRC Press (2015)
 * [Molecular Biology, 5th Edition](molecular_biology_5th.md), McGraw-Hill Education (2011)
 
+## Mathematics
+
+* [Modern Cryptography and Elliptic Curves: A Beginner's Guide](modern_cryptography_and_elliptic_curves.md), American Mathematical Society (2017)
+
 ## Physics
 
 * [A Most Incomprehensible Thing: Notes Towards a Very Gentle Introduction to the Mathematics of Relativity (Third edition)](most_incomprehensible_thing.md), Incomprehensible Books (2017)

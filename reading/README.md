@@ -3,8 +3,10 @@
 * [The Book of Satoshi](book_of_satoshi.md), e53 Publishing LLC (2014)
 * [Cryptoassets: The Innovative Investor's Guide to Bitcoin and Beyond](cryptoassets.md), McGraw-Hill Education (2018)
 * [Decentralized Applications](decentralized_applications.md), O'Reilly (2016)
+* [A Dissection of Bitcoin](dissection_of_bitcoin.md), self-publishing (2015)
 * [Game Theory and Mechanism Design](game_theory_and_mechanism_design.md), World Scientific (2014)
 * [Introduction to Reliable and Secure Distributed Programming, Second Edition](introduction_to_reliable_and_secure_distributed_programming_2nd.md), Springer (2011)
+* [Mastering Ethereum](mastering_ethereum.md), O'Reilly (not yet)
 * [The Science of the Blockchain](science_of_the_blockchain.md), Inverted Forest Publishing (2016)
 
 ## Computer Science
@@ -22,6 +24,10 @@
 * [Practical Foundations for Programming Languages, Second Edition](practical_foundations_for_programming_languages_2nd.md), Cambridge University Press (2016)
 * [Software Foundations](software_foundations.md) (2016)
 * [Types and Programming Languages](types_and_programming_languages.md), The MIT Press (2002)
+
+## Cryptology
+
+* [Introduction to Mathematical Cryptography, Second Edition](introduction_to_mathematical_cryptography_2nd.md), Springer (2014)
 
 ## Data Science and Machine Learning
 
@@ -43,6 +49,10 @@
 * [Mastering RethinkDB](mastering_rethinkdb.md), Packt Publishing (2016)
 * [Understanding MySQL Internals](understanding_mysql_internals.md), O'Reilly (2007)
 * [NoSQLデータベースファーストガイド](nosql_database_first_guide.md), 秀和システム (2011) translation
+
+## Documentation
+
+# [LaTeX Cookbook](latex_cookbook.md), Packt Publishing (2015)
 
 ## Essay and History
 
@@ -95,6 +105,7 @@
 * [Mazes for Programmers](mazes_for_programmers.md), The Pragmatic Programmers (2015)
 * [On Lisp](on_lisp.md), Prentice Hall (1993)
 * [Pearls of Functional Algorithm Design](pearls_of_functional_algorithm_design.md), Cambridge University Press (2010)
+* [Practical Concurrent Haskell: With Big Data Applications](practical_concurrent_haskell.md), Apress (2017)
 * [Practical Object-Oriented Design in Ruby](practical_object_oriented_design_in_ruby.md), Addison-Wesley (2013)
 * [Pro Spring Boot](pro_spring_boot.md), Apress (2016)
 * [Programming Rust: Fast, Safe Systems Development](programming_rust.md), O'Reilly (2017)
@@ -103,6 +114,7 @@
 * [Redis Essentials](redis_essentials.md), Packt Publishing (2015)
 * [Ruminations on C++](ruminations_on_c++.md), Addison-Wesley (1996)
 * [SCALA for the Impatient](scala_for_the_impatient.md), Addison-Wesley (2012) translation
+* [Spring Microservices in Action](spring_microservices_in_action), Manning (2017)
 * [Type-Driven Development with Idris](type_driven_development_with_idris.md), Manning (2017)
 * [You Don't Know JS: Async & Performance](you_dont_know_js_async_and_performance.md), O'Reilly (2015)
 * [はじめてのSpring Boot](first_spring_boot.md), 工学社 (2014) translation
@@ -138,6 +150,7 @@
 * [Mastering Full-Stack React Web Development](mastering_fullstack_react_web_development.md), Packt Publishing (2017)
 * [ng-book 2](ng_book_2.md), fullstack.io (2017)
 * [Node.js 6.x Blueprints](nodejs_6_blueprints.md), Packt Publishing (2016)
+* [React Quickly](react_quickly.md), Manning (2017) translation
 * [Pro AngularJS](pro_angularjs.md), Apress (2014) translation
 * [Two Scoops of Django: Best Practices for Django 1.8](two_scoops_of_django_1.8.md), Two Scoops Press (2015) translation
 * [Web Development with Node and Express](web_development_with_node_and_express.md), O'Reilly (2014) translation
