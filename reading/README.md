@@ -19,6 +19,7 @@
 * [From Mathematics to Generic Programming](from_mathematics_to_generic_programming.md), Addison-Wesley (2015)
 * [Implementing Functional Languages](implementing_functional_languages.md), Prentice Hall (1992)
 * [Logic for Computer Science, Second Edition](logic_for_computer_science_2nd.md), Dover (2015)
+* [Mathematics for Computer Science](mathematics_for_computer_science.md), online (2018)
 * [Performance Modeling and Design of Computer Systems](performance_modeling_and_design_of_computer_systems.md), Cambridge University Press (2013)
 * [Purely Functional Data Structures](purely_functional_data_structures.md), Cambridge University Press (1998)
 * [Practical Foundations for Programming Languages, Second Edition](practical_foundations_for_programming_languages_2nd.md), Cambridge University Press (2016)
@@ -28,6 +29,7 @@
 ## Cryptology
 
 * [Introduction to Mathematical Cryptography, Second Edition](introduction_to_mathematical_cryptography_2nd.md), Springer (2014)
+* [Secure Multiparty Computation and Secret Sharing](secure_multiparty_computation_and_secret_sharing.md), Cambridge University Press (2015)
 
 ## Data Science and Machine Learning
 
@@ -52,7 +54,7 @@
 
 ## Documentation
 
-# [LaTeX Cookbook](latex_cookbook.md), Packt Publishing (2015)
+* [LaTeX Cookbook](latex_cookbook.md), Packt Publishing (2015)
 
 ## Essay and History
 

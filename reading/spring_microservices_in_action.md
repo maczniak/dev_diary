@@ -451,9 +451,330 @@ This class is used to inject the correlation ID into any outgoing HTTP-based
 
 ## 7. Securing your microservices
 
+OAuth2 allows you to protect your REST-based services across these different
+ scenarios through different authentication schemes called grants. The OAuth2
+ specification has four types of grants: password, client credential,
+ authorization code, implicit<br>
+Your OAuth2 authentication service is going to be another Spring Boot
+ service.<br>
+The first dependency, `spring-cloud-security`, brings in the general Spring and
+ Spring Cloud security libraries. The second dependency,
+ `spring-security-oath2`, pulls in the Spring OAuth2 libraries. The
+ `@EnableAuthorizationServer` annotation tells Spring Cloud that this service
+ will be used as an OAuth2 service and to add several REST-based endpoints that
+ will be used in the OAuth2 authentication and authorization processes.<br>
+The payload returned from the `/auth/oauth/token` call contains five attributes:
+ `access_token`, `token_type`, `refresh_token`, `expires_in` (Spring default 12
+ hours), `scope`<br>
+`/auth/user` endpoint response:
+
+```json
+{
+  "user": {
+    "password": null,
+    "username": "john.carnell",
+    "authorities": [
+      {
+        "authority": "ROLE_USER"
+      }
+    ],
+    "accountNonExpired": true,
+    "accountNonLocked": true,
+    "credentialsNonExpired": true,
+    "enabled": true
+  },
+  "authorities": [
+    "ROLE_USER"
+  ]
+}
+```
+
+Any time you call an OAuth2 protected endpoint you need to pass along the OAuth2
+ access token. To do this, always create an HTTP header called `Authorization`
+ and with a value of `Bearer XXXXX`.<br>
+The `@EnableResourceServer` annotation tells Spring Cloud and Spring Security
+ that the service is a protected resource. The `@EnableResourceServer` enforces
+ a filter that intercepts all incoming calls to the service, checks to see if
+ there's an OAuth2 access token present in the incoming call's HTTP header, and
+ then calls back to the callback URI defined in the
+ `security.oauth2.resource.userInfoUri` to see if the token is valid. Once it
+ knows the token is valid, the `@EnableResourceServer` annotation also applies
+ any access control rules over who and what can access a service. To define
+ access control rules, you need to extend a Spring
+ `ResourceServerConfigurerAdapter` class and override the classes `configure()`
+ method.
+
+```java
+@Override
+public void configure(HttpSecurity http) throws Exception {
+  http.authorizeRequests()
+    .antMatcher(HttpMethod.DELETE, "/v1/organizations/**") // comma-separated list
+    .hasRole("ADMIN").anyRequest().authenticated();
+}
+```
+
+By default, Zuul won't forward sensitive HTTP headers such as `Cookie`,
+ `Set-Cookie`, and `Authorization` to downstream services. To allow Zuul to
+ propagate the "Authorization" HTTP header, you neeed to set the following
+ configuration in your Zuul services gateway's application.yml or Spring Cloud
+ Config data store: `zuul.sensitiveHeaders: Cookie,Set-Cookie`<br>
+Zuul can automatically propagate downstream OAuth2 access tokens and authorize
+ incoming requests against the OAuth2 service by using the `@EnableOAuth2Sso`
+ annotation.<br>
+Without Spring Security, you'd have to write a servlet filter to grab the HTTP
+ header off the incoming licensing service call and then manually add it to
+ every outbound service call in the licensing service. Spring OAuth2 provides a
+ new Rest Template class that supports OAuth2 calls.<br>
+OAuth2 is a token-based authentication framework, but ironically it doesn't
+ provide any standards for how the tokens in its specification are to be
+ defined. JWT (JavaScript Web Tokens) is an open standard (RFC-7519) that
+ attempts to provide a standard structure for OAuth2 tokens. A JWT token is
+ signed by the authenticating server that issues it. There's no need to call
+ back to the authenticating service to validate the contents of the token
+ because the signature of the token can be validated and the contents (such as
+ the expiration time and the user information) can be inspected by the receiving
+ microservice. However, to use and consume JWT tokens, your OAuth2
+ authentication service and the services being protected by the authentication
+ service must be configured in a different fashion.<br>
+[Using JWT with Spring Security OAuth][using_jwt_with_spring_security_oauth]<br>
+Notice that both the access_token and the refresh_token are now Base64-encoded
+ strings. It's extremely important to understand that your JWT tokens are
+ signed, but not encrypted.<br>
+This is normally done via the `OAuth2RestTemplate` class, however, the
+ `OAuth2RestTemplate` class doesn't propagate JWT-based tokens.<br>
+Public microservices should be behind their own services gateway and have their
+ own authentication service for performing OAuth2 authentication. The private
+ zone should have its own services gateway and authentication services. Public
+ API services should authenticate against the private zones authentication
+ service.<br>
+Many developers forget to lock down their outbound ports.
+
+[using_jwt_with_spring_security_oauth]: http://www.baeldung.com/spring-security-oauth-jwt
+
 ## 8. Event-driven architecture with Spring Cloud Stream
+
+JSON doesn't natively support versioning. However, you can use Apache Avro if
+ you need versioning. Avro is a binary protocol that has versioning built into
+ it. Spring Cloud Stream does support Apache Avro as a messaging protocol.<br>
+A messaging-based architecture can be complex and requires the development team
+ to pay close attention to several key things, including: message handling
+ semantics, message visibility (correlation ID) and message choreography
+ (difficult debugging).<br>
+Written in Java, Kafka has become the de facto message bus for many cloud-based
+ applications because it's highly reliable and scalable. Spring Cloud Stream
+ also supports the use of RabbitMQ as a message bus.<br>
+A channel name is always associated with a target queue name. The channel name
+ is used in the code, which means that you can switch the queues the channel
+ reads or writes from by changing the application's configuration, not the
+ application's code.<br>
+The `@EnableBinding(Source.class)` annotation tells Spring Cloud Stream that you
+ want to bind the service to a message broker. Spring Cloud Stream has a default
+ set of channels that can be configured to speak to a message broker. The
+ `Source` interface is a Spring Cloud defined interface that exposes a single
+ method called `output()` that returns a class of type `MessageChannel`. The
+ `Source` interface is a convenient interface to use when your service only
+ needs to publish to a single channel.<br>
+The `send()` method takes a Spring `Message` class. You use a Spring helper
+ class called `MessageBuilder` to take the contents of the model class and
+ convert it to a Spring `Message` class.
+
+```yaml
+spring:
+  stream:
+    bindings:
+      output: # in one application
+        destination: orgChangeTopic
+        content-type: application/json
+      input: # in the other application
+        destination: orgChangeTopic
+        content-type: application/json
+        group: licensingGroup # to guarantee process-once semantics for a service
+      kafka:
+        binder:
+          zkNodes: localhost
+          brokers: localhost
+```
+
+If you're going to pass state in your message, also make sure to include a
+ date-time stamp or version number in your message so that the services
+ consuming the data can inspect the data being passed and ensure that it's not
+ older than the copy of the data they already have.<br>
+Spring Cloud Stream will execute this
+ `@StreamListener(Sink.INPUT) public void loggerSink(MyModel orgChange)` method
+ every time a message is received off the input channel. The channel on the
+ `Sink` interface is called `input`.<br>
+The first thing you need to do is include the `spring-data-redis` dependencies,
+ along with the `jedis` and `common-pools2` dependencies.<br>
+Spring Data uses user-defined `@Repository` classes to provide a simple
+ mechanism for a Java class to access your Postgres database without having to
+ write low-level SQL queries.<br>
+In the case of an `output` channel, the defined method will return a
+ `MessageChannel` class instead of the `SubscribableChannel` class used with the
+ `input` channel.
 
 ## 9. Distributed tracing with Spring Cloud Sleuth and Zipkin
 
+Spring Cloud Sleuth is a Spring Cloud project that instruments your HTTP calls
+ with correlation IDs and provides hooks that feed the trace data it's producing
+ into OpenZipkin. Papertrail is a cloud-based service that allows you to
+ aggregate logging data from multiple sources into single searchable database.
+ Zipkin is an open source data-visualization tool that can show the flow of a
+ transaction across multiple serivces. Zipkin allows you to break a transaction
+ down into its component pieces and visually identify where there might be
+ performance hotspots.<br>
+You can add the correlation information to Spring's MDC (Mapped Diagnosis
+ Context) logging so that the generated correlation ID is automatically logged
+ by Spring Boots default SL4J and Logback implementation.<br>
+`spring-cloud-starter-sleuth`<br>
+Spring Cloud Sleuth will add four pieces of information to each log entry:
+ application name of the service, trace ID, span ID, and whether trace data was
+ sent to Zipkin. Span IDs (unique ID that represents part of the overall
+ transaction) are particularly relevant when you integrate with Zipkin to
+ visualize your transactions.<br>
+options for log aggregation solutions for use with spring boot - ELK, Graylog
+ (open source, on-premise), Splunk (on-premise, cloud-based), Simo Logic
+ (cloud-based, requires a corporate work account to signup), Papertrail
+ (cloud-based)<br>
+configure a Papertrail syslog connector and define a [Logspout][logspout] Docker
+ container to capture standard out from all the Docker containers. In Docker,
+ all containers write their standard out to an internal filesystem called
+ Docker.sock. A Logspout Docker container listens to Docker.sock and writes
+ whatever goes to standard output to a remote syslog location.
+
+```yaml
+# docker/common/docker-compose.yml
+logspout:
+  image: gliderlabs/logspout
+  command: syslog://logs5.papertrailapp.com:21218
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+```
+
+Docker 1.6+ do allow you to define alternative logging drivers to write the
+ stdout/stderr messages written from each container. Why did I choose Logspout
+ instead of using the standard Docker log driver? The ability to send log data
+ to multiple endpoints at once, a centralized location for filtering, custom
+ HTTP routes that let applications write log information, and integration with
+ protocols beyond syslog.<br>
+Learn a query language of your logging tool.<br>
+Spring Cloud Sleuth team believes that returning any of the tracing data can be
+ a potential security issue.<br>
+The Tracer class is entry point to access trace and span ID information.<br>
+(Zipkin client dependency) `spring-cloud-starter-sleuth`,
+ `spring-cloud-sleuth-core`, `spring-cloud-sleuth-zipkin`, (Zipkin server
+ dependency) `zipkin-server`, `zipkin-autoconfigure-ui`<br>
+From a functionality persepctive, there's no difference in Zipkin behavior if
+ you use HTTP, RabbitMQ, or Kafka.<br>
+While Zipkin is a Spring-Boot-based project, the `@EnableZipkinServer` is not a
+ Spring Cloud annotation. It's an annotation that's part of the Zipkin project.
+ The Spring Cloud team did write the `@EnableZipkinStreamServer` annotation as
+ part of Spring Cloud Sleuth. The `@EnableZipkinStreamServer` annotation
+ simplifies the use of Zipkin with RabbitMQ and Kafka. If you use the
+ `@EnableZipkinServer` annotation and the Zipkin server is unavailable, the
+ trace data that would have been sent by the service to Zipkin will be lost.<br>
+Zipkin supports four different back end data stores: in-memory data, MySQL,
+ Cassandra, and Elasticsearch.<br>
+By default, Zipkin will only write 10% of all transactions to the Zipkin server.
+
+[logspout]: https://github.com/gliderlabs/logspout
+
 ## 10. Deploying your microservices
+
+In Amazon's cloud, an Amazon-managed Redis server can only be accessed by
+ servers that are in the same VPC as the Redis server.<br>
+integration tests (with mocked or stubbed) vs platform tests<br>
+This killing and resurrection of a new server was termed
+ [Phoenix Server][phoenix_server] by Martin Fowler. Randomly killing and
+ restarting servers quickly exposes situations where you have state in your
+ services or infrastructure.<br>
+To add an encrypted environment variable, you must encrypt the environment
+ variable using the `travis encrypt DOCKER_USERNAME=... --add env.global`
+ command line tool on your desk in the project directory where you have your
+ source code. Encrypted variables are only good for the single GitHub
+ repository they're encrypted in and Travis is building against.<br>
+This
+ `BUILD_NAME=chapter10-$TRAVIS_BRANCH-$(date -u "+%Y%m%d%H%M%S")-$TRAVIS_BUILD_NUMBER`
+ will be used to tag your source code in GitHub and your Docker image when it's
+ pushed to the Docker hub repository.
+
+[phoenix_server]: https://martinfowler.com/bliki/PhoenixServer.html
+
+## appendix A. Running a cloud on your desktop
+
+```shell
+getPort() {
+    echo $1 | cut -d : -f 3 | xargs basename
+}
+
+while ! `nc -z database $(getPort $DATABASESERVER_PORT)`; do sleep 3; done
+```
+
+Each service being launched by Docker Compose has a label applied to it. This
+ will become the DNS entry for the Docker instance. Docker Compose will first
+ try to find the target image to be started in the local Docker repository. If
+ it can't find it, it will check the central Docker hub.<br>
+`docker-compose -f docker/common/docker-compose.yml up -d` →
+ `docker-compose -f docker/common/docker-compose.yml logs -f licensingservice`
+
+## appendix B. OAuth2 grant types
+
+Password grants
+* EagleEye passes the user credentials, along with the application
+  name/application secret key, directly to the EagleEye OAuth2 service.
+* Both the application making the request for a server and the services are
+  trusted and are owned by the same organization.
+
+Client credential grants
+* The client credentials grant is typically used when an application needs to
+  access an OAuth2 protected resource, but no human being is involved in the
+  transaction. With the client credentials grant type, the OAuth2 server only
+  authenticates based on application name and the secret key provided by the
+  owner of the resource.
+
+Authorization code grants
+* The authorization code grant is by far the most complicated of the OAuth2
+  grants, but it's also the most common flow used because it allows different
+  applications from different vendors to share data and services without having
+  to expose a user's credentials across multiple applications.
+* As part of the registration process, they'll also provide a callback URL back
+  to their Salesforce-based application. This callback URL is a Salesforce URL
+  that will be called after the EagleEye OAuth2 server has authenticated the
+  user's EagleEye credentials.
+* This authorization code isn't an OAuth2 access token.
+* Once the authorization code has been stored, the custom Salesforce application
+  can present the Salesforce application the secret key they generated during
+  the registration process and the authorization code back to EagleEye OAuth2
+  server. The EagleEye OAuth2 server will validate that the authorization code
+  is valid and then return back an OAuth2 token to the custom Salesforce
+  application.
+* Even though the user is logged into Salesforce and they're accessing EagleEye
+  data, at no time were the user's EagleEye credentials directly exposed to
+  Salesforce.
+
+Implicit grant
+* With an implicit grant, you're usually working with a pure JavaScript
+  application running completely inside of the browser.
+* The owner of the JavaScript application has registered the application with
+  the EagleEye OAuth2 server. They're provided an application name and also a
+  callback URL that will be redirected with the OAuth2 access token for the
+  user.
+* If the user successfully authenticates, the EagleEye OAuth2 service won't
+  return a token, but instead redirect the user back to a page the owner of the
+  JavaScript application registered. In the URL being redirected back to, the
+  OAuth2 access token will be passed as a query parameter by the OAuth2
+  authentication service.
+* The application will take the incoming request and run a JavaScript script
+  that will parse the OAuth2 access token and store it (usually as a cookie).
+* The implicit grant is the only grant type where the OAuth2 access token is
+  directly exposed to a public client (web browser). With an authorization code,
+  the returned OAuth2 token is never directly exposed to the user's browser.
+* OAuth2 tokens generated by the implicit grant are more vulnerable to attack
+  and misuse because the tokens are made available to the browser.
+* The implicit grant type OAuth2 tokens should be short-lived (1-2 hours).
+  Because the OAuth2 access token is stored in the browser, the OAuth2 spec (and
+  Spring Cloud security) doesn't support the concept of a refresh token in which
+  a token can be automatically renewed.
+
+In most of the OAuth2 grant flows, the OAuth2 server will issue both an access
+ token and a refresh token.
 
