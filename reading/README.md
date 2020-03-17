@@ -7,15 +7,20 @@
 * [Game Theory and Mechanism Design](game_theory_and_mechanism_design.md), World Scientific (2014)
 * [Introduction to Reliable and Secure Distributed Programming, Second Edition](introduction_to_reliable_and_secure_distributed_programming_2nd.md), Springer (2011)
 * [Mastering Ethereum](mastering_ethereum.md), O'Reilly (not yet)
+* [Mastering Monero](mastering_monero.md), self-publishing (2018)
+* [Programming Bitcoin](programming_bitcoin.md), O'Reilly (2019)
 * [The Science of the Blockchain](science_of_the_blockchain.md), Inverted Forest Publishing (2016)
 
 ## Computer Science
 
 * [개미 수열을 푸는 10가지 방법](look_and_say_sequence_in_10_ways.md), Leanpub (2017)
 * [알고리즘 문제 해결 전략](https://github.com/deliberate-practice/algo), 인사이트 (2012)
+* [Algorithms to Live By: The Computer Science of Human Decisions](algorithms_to_live_by.md), Picador (2016) translation
 * [A Beginner's Guide to Mathematical Logic](beginners_guide_to_mathematical_logic.md), Dover (2014)
 * [Certified Programming with Dependent Types](certified_programming_with_dependent_types.md), The MIT Press (2013)
 * [Compiling with Continuations](compiling_with_continuations.md), Cambridge University Press (1992)
+* [Complexity Theory: Exploring the Limits of Efficient Algorithms](complexity_theory.md), Springer (2005)
+* [Computational Complexity](computational_complexity.md), Cambridge University Press (2008)
 * [From Mathematics to Generic Programming](from_mathematics_to_generic_programming.md), Addison-Wesley (2015)
 * [Implementing Functional Languages](implementing_functional_languages.md), Prentice Hall (1992)
 * [Logic for Computer Science, Second Edition](logic_for_computer_science_2nd.md), Dover (2015)
@@ -30,6 +35,7 @@
 
 * [Introduction to Mathematical Cryptography, Second Edition](introduction_to_mathematical_cryptography_2nd.md), Springer (2014)
 * [Secure Multiparty Computation and Secret Sharing](secure_multiparty_computation_and_secret_sharing.md), Cambridge University Press (2015)
+* [Serious Cryptography](serious_cryptography.md), No Starch Press (2018)
 
 ## Data Science and Machine Learning
 
@@ -95,9 +101,11 @@
 * [Discovering Modern C++: An Intensive Course for Scientists, Engineers, and Programmers](discovering_modern_cpp.md), Addison-Wesley (2016)
 * [Erlang and OTP in Action](erlang_and_otp_in_action.md), Manning (2011) 
 * [Fluent Python](fluent_python.md), O'Reilly (2015)
+* [Haskell Design Patterns](haskell_design_patterns.md), Packt Publishing (2015)
 * [Haskell Programming from first principles](haskell_programming_from_first_principles.md), (not yet)
 * [Java Performance: The Definitive Guide](java_performance_the_definitive_guide.md), O'Reilly (2014) translation
-* [Just Spring](just_spring.md), O'Reily (2011)
+* [Just Spring](just_spring.md), O'Reilly (2011)
+* Kafka: The Definitive Guide, O'Reilly (2017)
 * [Learn You a Haskell for Great Good!](learn_you_a_haskell_for_great_good.md), No Starch Press (2014)
 * [Learn You Some Erlang for Great Good!](learn_you_some_erlang_for_great_good.md), No Starch Press (2013)
 * [Learning Swift: Building Apps for macOS, iOS, and Beyond](learning_swift_2nd.md), O'Reilly (2017)
@@ -111,6 +119,7 @@
 * [Practical Object-Oriented Design in Ruby](practical_object_oriented_design_in_ruby.md), Addison-Wesley (2013)
 * [Pro Spring Boot](pro_spring_boot.md), Apress (2016)
 * [Programming Rust: Fast, Safe Systems Development](programming_rust.md), O'Reilly (2017)
+* [Programming WebAssembly with Rust: Unified Development for Web, Mobile, and Embedded Applications](programming_webassembly_with_rust.md), Pragmatic Bookshelf (2019)
 * [Real World Haskell](real_world_haskell.md), O'Reilly (2008)
 * [Real World OCaml](real_world_ocaml.md), O'Reilly (2013)
 * [Redis Essentials](redis_essentials.md), Packt Publishing (2015)
@@ -132,6 +141,7 @@
 
 ## Software Engineering
 
+* [함께 자라기: 애자일로 가는 길](grow_together.md), 인사이트 (2018)
 * [Building Maintainable Software: Ten Guidelines for Future-Proof Code](https://github.com/deliberate-practice/agile), O'Reilly (2016)
 * [Peopleware: Productive Projects and Teams](https://github.com/deliberate-practice/agile), Addison-Wesley (3rd ed, 2013) translation
 * [Smart and Gets Things Done](smart_and_gets_things_done.md), Apress (2007) translation
@@ -141,6 +151,11 @@
 
 * [DevOps와 SE를 위한 리눅스 커널 이야기](linux_kernel_story_for_devops_and_se.md), 인사이트 (2017)
 * [Troubleshooting OpenVPN](troubleshooting_openvpn.md), Packt Publishing (2017)
+
+## Trading
+
+* Introduction to the Mathematics of Finance, American Mathematical Society (2006)
+* [Python for Finance, 2nd Edition: Mastering Data-Driven Finance](python_for_finance_2nd.md), O'Reilly (2018)
 
 ## Web
 

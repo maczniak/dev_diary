@@ -155,7 +155,8 @@ In a two-column layout, it's looks nice to put the quotation into a window in
 [The LaTeX Font Catalogue][latex_font_catalogue]<br>
 `tlmgr install collection-fontsrecommended|collection-fontsextra`,
  [`getnonfreefonts`][getnonfreefonts]<br>
-1) `\usepackage{lmodern}` 2) `\usepackage{kpfonts}` 3) `\usepackage{libertine}`,
+1\) `\usepackage{lmodern}` 2) `\usepackage{kpfonts}` 3)
+ `\usepackage{libertine}`,
  `\usepackage[libertine,cmintegrals,cmbraces,vvarbb]{newtxmath}`,
  `\usepackage[scaled=0.95]{inconsolata}` 4) `\usepackage[sc,osf]{mathpazo}`,
  `\usepackage[T1,small,euler-digits]{eulervm}`,
@@ -181,7 +182,7 @@ But `boldmath` and `unboldmath` are for making all symbols of a formula bold.
  requirement is to get bold versions of certain symbols. For example, bold
  symbols are often used for vectors and number systems.
  `\bmdefine{\balpha}{\alpha}` The `bm` package does the following for us:
- 1) determining available bold math fonts and using them if available, 2)
+ 1\) determining available bold math fonts and using them if available, 2)
  falling back to poor man's bold if no bold version can be found, which means
  overprinting with slight offsets, 3) keeping the correct spacing of the symbol,
  4) respecting the meaning of symbols, such as delimiters.<br>

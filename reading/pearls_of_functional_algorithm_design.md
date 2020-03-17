@@ -9,7 +9,14 @@
 
 ## 1 The smallest free number
 
+```haskell
+accumArray :: Ix i => (e -> a -> e) -> e -> (i, i) -> [(i, a)] -> Array i e
+```
+
 ## 2 A surpassing problem
+
+*table xs* is just the inversion table of *reverse xs* (a permutation of *n*
+ elements).
 
 ## 3 Improving on saddleback search
 
